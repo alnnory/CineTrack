@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineTrack: Your Movies, Your Story</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter and Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg: '#0B0614',
+                            deep: '#130A20',
+                            card: '#211432',
+                            cardHover: '#2A1A40',
+                            accent: '#7B2CDB',
+                            violet: '#A855F7',
+                            magenta: '#EC168C',
+                            gold: '#F5C542',
+                            text: '#FFFFFF',
+                            muted: '#C4B8D4',
+                            border: '#3B205C'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'cosmic-glow': '0 0 25px -5px rgba(123, 44, 219, 0.5), 0 0 15px -5px rgba(236, 22, 140, 0.3)',
+                        'magenta-glow': '0 0 20px 0px rgba(236, 22, 140, 0.4)',
+                        'gold-glow': '0 0 15px 0px rgba(245, 197, 66, 0.3)',
+                        'card-depth': '0 10px 30px -10px rgba(0, 0, 0, 0.7)',
+                    },
+                    backgroundImage: {
+                        'cosmic-gradient': 'radial-gradient(ellipse at 70% 20%, rgba(236, 22, 140, 0.25) 0%, rgba(123, 44, 219, 0.35) 40%, rgba(19, 10, 32, 0.95) 80%, rgba(11, 6, 20, 1) 100%)',
+                        'purple-btn': 'linear-gradient(135deg, #7B2CDB 0%, #A855F7 100%)',
+                        'magenta-btn': 'linear-gradient(135deg, #EC168C 0%, #7B2CDB 100%)',
+                        'card-gradient': 'linear-gradient(180deg, rgba(33, 20, 50, 0.7) 0%, rgba(19, 10, 32, 0.9) 100%)',
+                        'nebula-overlay': 'radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.15) 0%, transparent 60%)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0614;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3B205C;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7B2CDB;
+        }
+
+        /* Ambient Glow Animations */
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 0.9; transform: scale(1.03); }
+        }
+        .animate-pulse-glow {
+            animation: pulseGlow 6s infinite ease-in-out;
+        }
+
+        @keyframes floatEffect {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-float {
+            animation: floatEffect 5s infinite ease-in-out;
+        }
+
+        /* Glassmorphic Effects */
+        .glass-nav {
+            background: rgba(19, 10, 32, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(123, 44, 219, 0.2);
+        }
+        .glass-card {
+            background: rgba(33, 20, 50, 0.65);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(123, 44, 219, 0.2);
+        }
+        .glass-card:hover {
+            border-color: rgba(168, 85, 247, 0.5);
+        }
+
+        /* Custom Star Rating Glow */
+        .gold-star {
+            color: #F5C542;
+            text-shadow: 0 0 8px rgba(245, 197, 66, 0.5);
+        }
+
+        /* Canvas Poster Shadow */
+        .poster-container {
+            position: relative;
+            overflow: hidden;
+        }
+        .poster-container::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            box-shadow: inset 0 0 20px rgba(11, 6, 20, 0.8);
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body class="bg-brand-bg text-brand-text font-sans antialiased min-h-screen flex flex-col selection:bg-brand-accent selection:text-white">
+
+    <!-- NAVIGATION BAR -->
+    <header class="sticky top-0 z-50 glass-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-accent via-brand-magenta to-brand-gold p-[2px] shadow-cosmic-glow transform group-hover:rotate-6 transition-transform">
+                    <div class="w-full h-full bg-brand-bg rounded-[10px] flex items-center justify-center">
+                        <i class="fa-solid font-black fa-film text-brand-gold text-lg"></i>
+                    </div>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-display font-extrabold text-2xl tracking-tight text-white flex items-center gap-1">
+                        Cine<span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-violet to-brand-magenta">Track</span>
+                    </span>
+                    <span class="text-[9px] tracking-widest text-brand-muted uppercase font-semibold -mt-1">Your Movies. Your Story.</span>
+                </div>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex items-center gap-1 bg-brand-deep/80 px-4 py-1.5 rounded-full border border-brand-border/50">
+                <a href="#home" class="px-4 py-2 rounded-full text-sm font-semibold text-white bg-brand-accent/30 border border-brand-accent/50 shadow-sm flex items-center gap-2">
+                    <i class="fa-solid fa-house text-xs text-brand-gold"></i> Home
+                </a>
+                <a href="#movies" class="px-4 py-2 rounded-full text-sm font-medium text-brand-muted hover:text-white hover:bg-brand-card/50 transition-colors">Movies</a>
+                <a href="#watchlist" class="px-4 py-2 rounded-full text-sm font-medium text-brand-muted hover:text-white hover:bg-brand-card/50 transition-colors flex items-center gap-1.5">
+                    Watchlist <span id="nav-watchlist-count" class="bg-brand-accent text-xs text-white px-1.5 py-0.5 rounded-full font-bold">15</span>
+                </a>
+                <a href="#watched" class="px-4 py-2 rounded-full text-sm font-medium text-brand-muted hover:text-white hover:bg-brand-card/50 transition-colors">Watched</a>
+                <a href="#favorites" class="px-4 py-2 rounded-full text-sm font-medium text-brand-muted hover:text-white hover:bg-brand-card/50 transition-colors">Favorites</a>
+                <a href="#reviews" class="px-4 py-2 rounded-full text-sm font-medium text-brand-muted hover:text-white hover:bg-brand-card/50 transition-colors">Reviews</a>
+            </nav>
+
+            <!-- Actions & Search & Profile -->
+            <div class="flex items-center gap-3 sm:gap-4">
+                <!-- Interactive Search Bar -->
+                <div class="relative group">
+                    <input type="text" id="searchInput" placeholder="Search universe..." 
+                           class="bg-brand-deep/90 text-sm text-white placeholder-brand-muted/60 rounded-full pl-10 pr-4 py-2 w-36 sm:w-48 focus:w-64 focus:outline-none border border-brand-border focus:border-brand-accent transition-all duration-300">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-muted group-focus-within:text-brand-gold text-xs transition-colors"></i>
+                </div>
+
+                <!-- Notifications Button -->
+                <button onclick="showToast('No new notifications')" class="relative w-10 h-10 rounded-full bg-brand-deep hover:bg-brand-card border border-brand-border flex items-center justify-center text-brand-muted hover:text-white transition-all">
+                    <i class="fa-regular fa-bell text-sm"></i>
+                    <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-brand-magenta animate-ping"></span>
+                    <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-brand-magenta"></span>
+                </button>
+
+                <!-- Profile Avatar -->
+                <button class="flex items-center gap-2 p-1 rounded-full border border-brand-accent/40 bg-brand-deep hover:border-brand-magenta transition-all">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-accent to-brand-magenta p-[2px]">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Avatar" class="w-full h-full object-cover rounded-full">
+                    </div>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- 2. HERO / LANDING PAGE BANNER -->
+        <section id="home" class="relative overflow-hidden bg-cosmic-gradient py-12 md:py-20 border-b border-brand-border/30">
+            <!-- Background Nebula Glowing Lights -->
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-brand-accent/20 rounded-full blur-[120px] pointer-events-none animate-pulse-glow"></div>
+            <div class="absolute bottom-10 right-1/3 w-80 h-80 bg-brand-magenta/20 rounded-full blur-[100px] pointer-events-none animate-pulse-glow" style="animation-delay: 2s;"></div>
+            <div class="absolute top-10 right-10 w-64 h-64 bg-brand-gold/10 rounded-full blur-[90px] pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <!-- Hero Content Left -->
+                    <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-gold/10 border border-brand-gold/30 text-brand-gold text-xs font-bold tracking-widest uppercase">
+                            <i class="fa-solid fa-sparkles text-xs"></i>
+                            YOUR PERSONAL MOVIE UNIVERSE
+                        </div>
+                        
+                        <h1 class="font-display font-black text-4xl sm:text-6xl lg:text-7xl tracking-tight text-white leading-none">
+                            Every Movie. <br>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-brand-violet to-brand-magenta">One Place.</span>
+                        </h1>
+
+                        <p class="text-brand-muted text-base sm:text-lg max-w-2xl font-normal leading-relaxed mx-auto lg:mx-0">
+                            Track what you watch, save what's next, and keep your favorite cosmic stories close. Immerse yourself in a cinema experience curated specifically for your journey.
+                        </p>
+
+                        <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-4">
+                            <a href="#movies" class="px-8 py-4 rounded-full bg-purple-btn hover:opacity-95 text-white font-bold text-sm tracking-wide shadow-cosmic-glow transform hover:-translate-y-0.5 transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-compass text-brand-gold"></i> Explore Movies
+                            </a>
+                            <button onclick="toggleWatchlist('hero-featured')" id="hero-watchlist-btn" class="px-7 py-4 rounded-full bg-brand-deep/80 hover:bg-brand-card border border-brand-accent/50 hover:border-brand-accent text-white font-semibold text-sm tracking-wide transition-all flex items-center gap-2 shadow-lg">
+                                <i class="fa-solid fa-plus text-brand-magenta" id="hero-watchlist-icon"></i> <span id="hero-watchlist-text">Add Featured to Watchlist</span>
+                            </button>
+                        </div>
+
+                        <!-- Mini Rating & Metrics Badge -->
+                        <div class="pt-6 flex items-center justify-center lg:justify-start gap-8 border-t border-brand-border/40">
+                            <div>
+                                <div class="text-2xl font-black font-display text-white">10K+</div>
+                                <div class="text-xs text-brand-muted">Titles Indexed</div>
+                            </div>
+                            <div class="w-px h-8 bg-brand-border/50"></div>
+                            <div>
+                                <div class="text-2xl font-black font-display text-brand-gold flex items-center gap-1">
+                                    4.9 <i class="fa-solid fa-star text-xs"></i>
+                                </div>
+                                <div class="text-xs text-brand-muted">Community Score</div>
+                            </div>
+                            <div class="w-px h-8 bg-brand-border/50"></div>
+                            <div>
+                                <div class="text-2xl font-black font-display text-brand-magenta">100%</div>
+                                <div class="text-xs text-brand-muted">Cinematic Magic</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Featured Movie Artwork Right -->
+                    <div class="lg:col-span-5 relative flex justify-center">
+                        <!-- Subtle Glow Container Behind Featured Poster -->
+                        <div class="absolute -inset-1.5 bg-gradient-to-r from-brand-accent via-brand-magenta to-brand-gold rounded-3xl blur-xl opacity-70 animate-pulse-glow"></div>
+                        
+                        <div class="relative w-full max-w-md glass-card rounded-2xl overflow-hidden shadow-2xl border border-brand-accent/40 group hover:border-brand-magenta/60 transition-all duration-500">
+                            <!-- Featured Label -->
+                            <div class="absolute top-4 left-4 z-20 bg-brand-bg/90 backdrop-blur-md px-3 py-1 rounded-full border border-brand-gold/50 flex items-center gap-1.5 shadow-md">
+                                <i class="fa-solid fa-crown text-brand-gold text-xs"></i>
+                                <span class="text-xs font-bold text-brand-gold uppercase tracking-wider">Featured Story</span>
+                            </div>
+
+                            <!-- Generated Canvas Artwork Poster -->
+                            <div class="relative h-96 w-full overflow-hidden bg-brand-deep cursor-pointer" onclick="openMovieModal('hero-featured')">
+                                <canvas id="featuredCanvas" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"></canvas>
+                                <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-transparent to-transparent"></div>
+                                
+                                <!-- Play/Details Floating Overlay Button -->
+                                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-brand-bg/40 backdrop-blur-xs">
+                                    <span class="w-16 h-16 rounded-full bg-brand-magenta/90 text-white flex items-center justify-center shadow-magenta-glow transform scale-90 group-hover:scale-100 transition-transform">
+                                        <i class="fa-solid fa-eye text-xl"></i>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Featured Poster Info -->
+                            <div class="p-6 space-y-3 bg-brand-card/90">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-brand-accent/20 border border-brand-accent/40 text-brand-violet">Sci-Fi / Quantum</span>
+                                    <div class="flex items-center gap-1 font-bold text-sm text-brand-gold">
+                                        <i class="fa-solid fa-star gold-star"></i> 4.9 <span class="text-xs font-normal text-brand-muted">(2.4k)</span>
+                                    </div>
+                                </div>
+
+                                <h3 class="font-display font-bold text-2xl text-white group-hover:text-brand-violet transition-colors">Chronos: Edge of Infinity</h3>
+
+                                <div class="flex items-center gap-4 text-xs font-medium text-brand-muted">
+                                    <span><i class="fa-regular fa-calendar text-brand-accent mr-1"></i> 2026</span>
+                                    <span><i class="fa-regular fa-clock text-brand-accent mr-1"></i> 2h 42m</span>
+                                    <span><i class="fa-solid fa-film text-brand-accent mr-1"></i> 8K IMAX</span>
+                                </div>
+
+                                <p class="text-xs text-brand-muted/90 line-clamp-2">
+                                    When the timeline fragments following a cosmic tear, a rogue navigator must traverse dying star systems to prevent the total collapse of existence.
+                                </p>
+
+                                <div class="pt-2 flex items-center justify-between border-t border-brand-border/40 text-xs">
+                                    <span class="text-brand-muted">Director: <strong class="text-white">Aria Vance</strong></span>
+                                    <button onclick="openMovieModal('hero-featured')" class="text-brand-magenta hover:text-white font-bold flex items-center gap-1">
+                                        Full Details <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. MOVIE COLLECTION STATISTICS -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                
+                <!-- Stat Card 1 -->
+                <div class="glass-card rounded-2xl p-5 border border-brand-border/60 hover:border-brand-accent/60 transition-all shadow-card-depth flex items-center gap-4 group">
+                    <div class="w-12 h-12 rounded-xl bg-brand-accent/20 border border-brand-accent/40 flex items-center justify-center text-brand-violet text-xl group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-clapperboard"></i>
+                    </div>
+                    <div>
+                        <div class="font-display font-black text-2xl text-white" id="stat-total">50</div>
+                        <div class="text-xs font-medium text-brand-muted uppercase tracking-wider">Total Movies</div>
+                    </div>
+                </div>
+
+                <!-- Stat Card 2 -->
+                <div class="glass-card rounded-2xl p-5 border border-brand-border/60 hover:border-brand-accent/60 transition-all shadow-card-depth flex items-center gap-4 group">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-xl group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div>
+                        <div class="font-display font-black text-2xl text-white" id="stat-watched">32</div>
+                        <div class="text-xs font-medium text-brand-muted uppercase tracking-wider">Watched</div>
+                    </div>
+                </div>
+
+                <!-- Stat Card 3 -->
+                <div class="glass-card rounded-2xl p-5 border border-brand-border/60 hover:border-brand-accent/60 transition-all shadow-card-depth flex items-center gap-4 group">
+                    <div class="w-12 h-12 rounded-xl bg-brand-magenta/20 border border-brand-magenta/40 flex items-center justify-center text-brand-magenta text-xl group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-bookmark"></i>
+                    </div>
+                    <div>
+                        <div class="font-display font-black text-2xl text-white" id="stat-towatch">15</div>
+                        <div class="text-xs font-medium text-brand-muted uppercase tracking-wider">To Watch</div>
+                    </div>
+                </div>
+
+                <!-- Stat Card 4 -->
+                <div class="glass-card rounded-2xl p-5 border border-brand-border/60 hover:border-brand-accent/60 transition-all shadow-card-depth flex items-center gap-4 group">
+                    <div class="w-12 h-12 rounded-xl bg-brand-gold/20 border border-brand-gold/40 flex items-center justify-center text-brand-gold text-xl group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-heart"></i>
+                    </div>
+                    <div>
+                        <div class="font-display font-black text-2xl text-white" id="stat-favorites">8</div>
+                        <div class="text-xs font-medium text-brand-muted uppercase tracking-wider">Favorites</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 4. POPULAR MOVIES SECTION -->
+        <section id="movies" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-white flex items-center gap-3">
+                        <span class="w-2 h-7 rounded-full bg-gradient-to-b from-brand-accent to-brand-magenta inline-block"></span>
+                        Popular Movies
+                    </h2>
+                    <p class="text-brand-muted text-xs sm:text-sm mt-1">Highest rated space operas & multidimensional thrillers</p>
+                </div>
+                <a href="#movies" class="text-sm font-semibold text-brand-violet hover:text-brand-magenta flex items-center gap-1 transition-colors">
+                    View All <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+            </div>
+
+            <!-- Popular Grid (5 Cards Row) -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6" id="popularGrid">
+                <!-- Javascript will populate dynamic movie cards -->
+            </div>
+        </section>
+
+        <!-- 5. BROWSE BY GENRE -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-brand-border/30">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h2 class="font-display font-extrabold text-2xl text-white flex items-center gap-3">
+                        <span class="w-2 h-7 rounded-full bg-brand-gold inline-block"></span>
+                        Explore by Genre
+                    </h2>
+                    <p class="text-brand-muted text-xs sm:text-sm mt-1">Filter titles by cosmic category</p>
+                </div>
+                
+                <!-- Active Filter Counter -->
+                <div class="text-xs text-brand-muted bg-brand-card/80 px-3 py-1.5 rounded-full border border-brand-border self-start md:self-auto">
+                    Showing: <span id="genreFilterCount" class="text-brand-gold font-bold">All Categories</span>
+                </div>
+            </div>
+
+            <!-- Pill Filters Row -->
+            <div class="flex items-center gap-2.5 overflow-x-auto pb-4 scrollbar-none" id="genreContainer">
+                <!-- Genre buttons dynamically inserted -->
+            </div>
+        </section>
+
+        <!-- 6. RECENTLY ADDED SECTION -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-16">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-white flex items-center gap-3">
+                        <span class="w-2 h-7 rounded-full bg-brand-magenta inline-block"></span>
+                        Recently Added
+                    </h2>
+                    <p class="text-brand-muted text-xs sm:text-sm mt-1">Fresh additions to your personal timeline</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button class="w-8 h-8 rounded-full bg-brand-card hover:bg-brand-accent/40 border border-brand-border text-white text-xs transition-colors flex items-center justify-center">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button class="w-8 h-8 rounded-full bg-brand-card hover:bg-brand-accent/40 border border-brand-border text-white text-xs transition-colors flex items-center justify-center">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recently Added Row -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6" id="recentGrid">
+                <!-- Populated via Javascript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- 7. FOOTER -->
+    <footer class="bg-brand-deep border-t border-brand-border/50 text-brand-muted py-12 relative overflow-hidden">
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-32 bg-gradient-to-t from-brand-accent/10 to-transparent pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <!-- Col 1: Brand Info -->
+                <div class="space-y-4 md:col-span-1">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-accent via-brand-magenta to-brand-gold p-[2px]">
+                            <div class="w-full h-full bg-brand-bg rounded-[10px] flex items-center justify-center">
+                                <i class="fa-solid fa-film text-brand-gold text-sm"></i>
+                            </div>
+                        </div>
+                        <span class="font-display font-extrabold text-2xl text-white">Cine<span class="text-brand-magenta">Track</span></span>
+                    </div>
+                    <p class="text-xs text-brand-muted leading-relaxed">
+                        Your ultimate cinematic universe tracker. Log movies, curate custom watchlists, and analyze your story experience.
+                    </p>
+                    <div class="flex items-center gap-3 text-sm">
+                        <a href="#" class="w-8 h-8 rounded-full bg-brand-card flex items-center justify-center hover:text-white hover:bg-brand-accent transition-all"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-brand-card flex items-center justify-center hover:text-white hover:bg-brand-accent transition-all"><i class="fa-brands fa-discord"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-brand-card flex items-center justify-center hover:text-white hover:bg-brand-accent transition-all"><i class="fa-brands fa-instagram"></i></a>
+                    </div>
+                </div>
+
+                <!-- Col 2: Navigation Links -->
+                <div>
+                    <h4 class="font-display font-bold text-sm text-white uppercase tracking-wider mb-4">Quick Navigation</h4>
+                    <ul class="space-y-2.5 text-xs">
+                        <li><a href="#home" class="hover:text-brand-gold transition-colors">Home Landing</a></li>
+                        <li><a href="#movies" class="hover:text-brand-gold transition-colors">Popular Movies</a></li>
+                        <li><a href="#watchlist" class="hover:text-brand-gold transition-colors">Watchlist Archive</a></li>
+                        <li><a href="#favorites" class="hover:text-brand-gold transition-colors">Favorite Collection</a></li>
+                        <li><a href="#reviews" class="hover:text-brand-gold transition-colors">Community Reviews</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Genres -->
+                <div>
+                    <h4 class="font-display font-bold text-sm text-white uppercase tracking-wider mb-4">Top Genres</h4>
+                    <ul class="space-y-2.5 text-xs">
+                        <li><a href="#" onclick="selectGenre('Sci-Fi')" class="hover:text-brand-magenta transition-colors">Sci-Fi Operations</a></li>
+                        <li><a href="#" onclick="selectGenre('Action')" class="hover:text-brand-magenta transition-colors">Quantum Action</a></li>
+                        <li><a href="#" onclick="selectGenre('Fantasy')" class="hover:text-brand-magenta transition-colors">Cosmic Fantasy</a></li>
+                        <li><a href="#" onclick="selectGenre('Thriller')" class="hover:text-brand-magenta transition-colors">Deep Space Thriller</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Newsletter / Stats -->
+                <div>
+                    <h4 class="font-display font-bold text-sm text-white uppercase tracking-wider mb-4">Cosmic Updates</h4>
+                    <p class="text-xs text-brand-muted mb-3">Subscribe for weekly curated watchlist suggestions.</p>
+                    <div class="flex gap-2">
+                        <input type="email" placeholder="Enter your email" class="bg-brand-card border border-brand-border rounded-lg px-3 py-2 text-xs text-white placeholder-brand-muted focus:outline-none focus:border-brand-accent w-full">
+                        <button onclick="showToast('Subscribed to CineTrack Updates!')" class="bg-brand-accent hover:bg-brand-violet text-white text-xs px-3 py-2 rounded-lg font-bold transition-all">Join</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Copyright Notice -->
+            <div class="pt-8 border-t border-brand-border/40 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+                <p>&copy; 2026 CineTrack Platform. Built with Marvel Endgame Cinematic UI Aesthetics.</p>
+                <div class="flex gap-6 text-brand-muted">
+                    <a href="#" class="hover:text-white">Privacy Policy</a>
+                    <a href="#" class="hover:text-white">Terms of Service</a>
+                    <a href="#" class="hover:text-white">API Docs</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MOVIE DETAIL MODAL -->
+    <div id="movieModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="relative w-full max-w-3xl glass-card rounded-3xl overflow-hidden shadow-2xl border border-brand-accent/50 max-h-[90vh] flex flex-col my-auto">
+            
+            <!-- Close Button -->
+            <button onclick="closeMovieModal()" class="absolute top-4 right-4 z-30 w-10 h-10 rounded-full bg-brand-bg/80 text-white hover:bg-brand-magenta flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark text-base"></i>
+            </button>
+
+            <div class="overflow-y-auto">
+                <!-- Modal Poster Header -->
+                <div class="relative h-64 sm:h-80 w-full bg-brand-deep">
+                    <canvas id="modalCanvas" class="w-full h-full object-cover"></canvas>
+                    <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-brand-card/40 to-transparent"></div>
+                    
+                    <div class="absolute bottom-6 left-6 right-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                        <div>
+                            <span id="modalGenre" class="text-xs font-bold px-3 py-1 rounded-full bg-brand-accent text-white uppercase tracking-wider">Sci-Fi</span>
+                            <h2 id="modalTitle" class="font-display font-black text-3xl sm:text-4xl text-white mt-2">Title Here</h2>
+                            <p id="modalMeta" class="text-xs text-brand-muted mt-1">2026 • 2h 15m • Director Name</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span id="modalRating" class="text-2xl font-black font-display text-brand-gold flex items-center gap-1">
+                                <i class="fa-solid fa-star gold-star text-lg"></i> 4.8
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-6 space-y-6">
+                    <div>
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-brand-gold mb-2">Synopsis</h4>
+                        <p id="modalOverview" class="text-sm text-brand-muted/90 leading-relaxed">
+                            Detailed overview story content goes here.
+                        </p>
+                    </div>
+
+                    <!-- Cast & Crew Mock -->
+                    <div>
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-brand-gold mb-3">Key Cast</h4>
+                        <div class="grid grid-cols-3 sm:grid-cols-4 gap-3 text-xs">
+                            <div class="bg-brand-deep p-2.5 rounded-xl border border-brand-border/40">
+                                <div class="font-bold text-white">Alex Mercer</div>
+                                <div class="text-[10px] text-brand-muted">as Commander Vance</div>
+                            </div>
+                            <div class="bg-brand-deep p-2.5 rounded-xl border border-brand-border/40">
+                                <div class="font-bold text-white">Elena Rostova</div>
+                                <div class="text-[10px] text-brand-muted">as Dr. Kova</div>
+                            </div>
+                            <div class="bg-brand-deep p-2.5 rounded-xl border border-brand-border/40">
+                                <div class="font-bold text-white">Marcus Thorne</div>
+                                <div class="text-[10px] text-brand-muted">as AI Overlord</div>
+                            </div>
+                            <div class="bg-brand-deep p-2.5 rounded-xl border border-brand-border/40 hidden sm:block">
+                                <div class="font-bold text-white">Soren Kai</div>
+                                <div class="text-[10px] text-brand-muted">as Pilot Dax</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Actions -->
+                    <div class="pt-4 border-t border-brand-border/50 flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <button id="modalWatchlistBtn" class="px-5 py-2.5 rounded-full bg-brand-accent hover:bg-brand-violet text-white font-bold text-xs transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-plus"></i> Add to Watchlist
+                            </button>
+                            <button id="modalFavBtn" class="px-5 py-2.5 rounded-full bg-brand-deep hover:bg-brand-card border border-brand-border text-white font-bold text-xs transition-all flex items-center gap-2">
+                                <i class="fa-regular fa-heart text-brand-magenta"></i> Favorite
+                            </button>
+                        </div>
+                        <span id="modalStatusTag" class="text-xs font-semibold text-brand-gold bg-brand-gold/10 px-3 py-1 rounded-full border border-brand-gold/30">
+                            Status: To Watch
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 glass-card px-5 py-3 rounded-2xl border border-brand-accent shadow-cosmic-glow text-white text-xs font-bold flex items-center gap-3 translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-brand-gold text-base"></i>
+        <span id="toastMsg">Movie added to watchlist</span>
+    </div>
+
+    <!-- JAVASCRIPT APP LOGIC -->
+    <script>
+        // Sample Movie Database with unique poster themes
+        const movieData = [
+            {
+                id: 'hero-featured',
+                title: 'Chronos: Edge of Infinity',
+                year: '2026',
+                genre: 'Sci-Fi',
+                duration: '2h 42m',
+                rating: 4.9,
+                overview: 'When the timeline fragments following a cosmic quantum collapse, a rogue navigator must traverse dying star systems to assemble the Chronos Relic before existence erases itself.',
+                colors: ['#7B2CDB', '#EC168C', '#0B0614', '#F5C542'],
+                isWatchlist: true,
+                isFavorite: true,
+                status: 'To Watch',
+                popular: true,
+                recent: false
+            },
+            {
+                id: 'm1',
+                title: 'Nebula Genesis',
+                year: '2025',
+                genre: 'Sci-Fi',
+                duration: '2h 18m',
+                rating: 4.8,
+                overview: 'Deep space explorers discover a biological celestial entity giving birth to new solar systems, guarding secrets of the first cosmic dawn.',
+                colors: ['#00F2FE', '#4FACFE', '#0B0614', '#A855F7'],
+                isWatchlist: true,
+                isFavorite: false,
+                status: 'In Progress',
+                popular: true,
+                recent: true
+            },
+            {
+                id: 'm2',
+                title: 'Valhalla: Protocol zero',
+                year: '2025',
+                genre: 'Action',
+                duration: '2h 05m',
+                rating: 4.7,
+                overview: 'In a cybernetic Norse dystopia, an exiled valkyrie combat pilot infiltrates an orbital citadel to destroy a sentient rogue superweapon.',
+                colors: ['#FF0844', '#FFB199', '#130A20', '#F5C542'],
+                isWatchlist: false,
+                isFavorite: true,
+                status: 'Watched',
+                popular: true,
+                recent: false
+            },
+            {
+                id: 'm3',
+                title: 'Shadows of Aether',
+                year: '2026',
+                genre: 'Fantasy',
+                duration: '2h 30m',
+                rating: 4.9,
+                overview: 'A guild of star mages must ignite the dying magical sun of their homeworld using ancient stellar alchemy.',
+                colors: ['#B122E5', '#FF63DE', '#0B0614', '#7B2CDB'],
+                isWatchlist: true,
+                isFavorite: true,
+                status: 'To Watch',
+                popular: true,
+                recent: true
+            },
+            {
+                id: 'm4',
+                title: 'Quantum Abyss',
+                year: '2024',
+                genre: 'Thriller',
+                duration: '1h 55m',
+                rating: 4.6,
+                overview: 'Trapped inside a collapsing wormhole laboratory, two rival physicists must solve paradoxical time loops to escape alternate dark dimensions.',
+                colors: ['#43CBFF', '#9708CC', '#0B0614', '#EC168C'],
+                isWatchlist: false,
+                isFavorite: false,
+                status: 'Watched',
+                popular: true,
+                recent: false
+            },
+            {
+                id: 'm5',
+                title: 'The Eternal Realm',
+                year: '2026',
+                genre: 'Animation',
+                duration: '1h 48m',
+                rating: 4.8,
+                overview: 'A visually breathtaking animated odyssey exploring a spirit world woven from stardust and forgotten galactic myths.',
+                colors: ['#F5C542', '#EC168C', '#211432', '#A855F7'],
+                isWatchlist: true,
+                isFavorite: false,
+                status: 'New',
+                popular: true,
+                recent: true
+            },
+            {
+                id: 'm6',
+                title: 'Void Runner 2099',
+                year: '2026',
+                genre: 'Action',
+                duration: '2h 12m',
+                rating: 4.5,
+                overview: 'A bounty hunter in neon-drenched megacity high-orbit races against corrupt megacorporations to deliver a biomechanical key.',
+                colors: ['#00E5FF', '#7B2CDB', '#0B0614', '#FF0844'],
+                isWatchlist: false,
+                isFavorite: false,
+                status: 'New',
+                popular: false,
+                recent: true
+            },
+            {
+                id: 'm7',
+                title: 'Echoes of Titan',
+                year: '2025',
+                genre: 'Horror',
+                duration: '1h 50m',
+                rating: 4.3,
+                overview: 'A mining outpost on Saturn’s moon unearths a dormant subterranean acoustic entity that projects crew members’ deepest horrors.',
+                colors: ['#3A1C71', '#D76D77', '#FFAF7B', '#0B0614'],
+                isWatchlist: true,
+                isFavorite: false,
+                status: 'To Watch',
+                popular: false,
+                recent: true
+            },
+            {
+                id: 'm8',
+                title: 'Starlight Romance',
+                year: '2025',
+                genre: 'Romance',
+                duration: '1h 42m',
+                rating: 4.6,
+                overview: 'Two station communications engineers separated across light years fall in love through delayed quantum transmissions.',
+                colors: ['#EC168C', '#FF9A9E', '#FECFEF', '#7B2CDB'],
+                isWatchlist: false,
+                isFavorite: true,
+                status: 'Watched',
+                popular: false,
+                recent: true
+            },
+            {
+                id: 'm9',
+                title: 'Galaxy Comedy Hour',
+                year: '2024',
+                genre: 'Comedy',
+                duration: '1h 35m',
+                rating: 4.4,
+                overview: 'A bumbling alien tourist crew accidentally gets hired as planetary diplomats for Earth.',
+                colors: ['#F5C542', '#00E676', '#130A20', '#EC168C'],
+                isWatchlist: false,
+                isFavorite: false,
+                status: 'Watched',
+                popular: false,
+                recent: false
+            }
+        ];
+
+        const genres = ['All', 'Action', 'Sci-Fi', 'Fantasy', 'Thriller', 'Animation', 'Horror', 'Romance', 'Comedy'];
+        let activeGenre = 'All';
+
+        // Helper: Canvas Poster Renderer to generate high-fidelity cosmic artwork without external dependencies
+        function renderPosterCanvas(canvasId, colors, titleText) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            // Set internal resolution
+            canvas.width = 400;
+            canvas.height = 600;
+
+            const c1 = colors[0] || '#7B2CDB';
+            const c2 = colors[1] || '#EC168C';
+            const c3 = colors[2] || '#0B0614';
+            const c4 = colors[3] || '#F5C542';
+
+            // Background Gradient
+            const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            grad.addColorStop(0, c3);
+            grad.addColorStop(0.5, c1);
+            grad.addColorStop(1, c3);
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Swirling Nebula Orbs
+            for (let i = 0; i < 4; i++) {
+                ctx.save();
+                ctx.beginPath();
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const r = 80 + Math.random() * 120;
+                const radGrad = ctx.createRadialGradient(x, y, 10, x, y, r);
+                radGrad.addColorStop(0, c2);
+                radGrad.addColorStop(0.8, c1);
+                radGrad.addColorStop(1, 'transparent');
+                ctx.fillStyle = radGrad;
+                ctx.globalAlpha = 0.45;
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // Starfield Clusters
+            ctx.fillStyle = '#FFFFFF';
+            for (let i = 0; i < 120; i++) {
+                const sx = Math.random() * canvas.width;
+                const sy = Math.random() * canvas.height;
+                const sz = Math.random() * 2;
+                ctx.globalAlpha = Math.random() * 0.9;
+                ctx.fillRect(sx, sy, sz, sz);
+            }
+
+            // Cosmic Geometric Rings / Grid
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2 - 30);
+            ctx.strokeStyle = c4;
+            ctx.lineWidth = 1.5;
+            ctx.globalAlpha = 0.35;
+            ctx.beginPath();
+            ctx.arc(0, 0, 90, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.globalAlpha = 0.2;
+            ctx.beginPath();
+            ctx.arc(0, 0, 130, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Diamond emblem
+            ctx.rotate(45 * Math.PI / 180);
+            ctx.strokeStyle = c2;
+            ctx.globalAlpha = 0.5;
+            ctx.strokeRect(-50, -50, 100, 100);
+            ctx.restore();
+
+            // Dark bottom vignette for title legibility
+            const botGrad = ctx.createLinearGradient(0, canvas.height - 180, 0, canvas.height);
+            botGrad.addColorStop(0, 'transparent');
+            botGrad.addColorStop(1, '#0B0614');
+            ctx.fillStyle = botGrad;
+            ctx.globalAlpha = 0.95;
+            ctx.fillRect(0, canvas.height - 200, canvas.width, 200);
+
+            // Title Graphic on Poster
+            ctx.globalAlpha = 1.0;
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 24px Outfit, sans-serif';
+            ctx.textAlign = 'center';
+            
+            // Wrap text if needed
+            const words = titleText.split(' ');
+            if (words.length > 2) {
+                ctx.fillText(words.slice(0, 2).join(' '), canvas.width / 2, canvas.height - 70);
+                ctx.fillStyle = c4;
+                ctx.fillText(words.slice(2).join(' '), canvas.width / 2, canvas.height - 40);
+            } else {
+                ctx.fillText(titleText, canvas.width / 2, canvas.height - 50);
+            }
+        }
+
+        // Render Movie Card HTML
+        function createMovieCardHTML(movie) {
+            return `
+                <div class="glass-card rounded-2xl overflow-hidden shadow-card-depth group hover:-translate-y-1.5 transition-all duration-300 border border-brand-border/40 hover:border-brand-magenta/60 flex flex-col justify-between">
+                    <!-- Poster Container -->
+                    <div class="relative aspect-[2/3] w-full overflow-hidden bg-brand-deep cursor-pointer" onclick="openMovieModal('${movie.id}')">
+                        <canvas id="canvas-${movie.id}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"></canvas>
+                        
+                        <!-- Overlay Badge Tag -->
+                        <div class="absolute top-3 left-3 z-10 bg-brand-bg/80 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-brand-accent/40 text-[10px] font-bold text-white">
+                            ${movie.genre}
+                        </div>
+
+                        <!-- Quick Watchlist / Fav Buttons Overlay -->
+                        <div class="absolute top-3 right-3 z-10 flex flex-col gap-1.5">
+                            <button onclick="event.stopPropagation(); toggleWatchlist('${movie.id}')" 
+                                    class="w-7 h-7 rounded-full ${movie.isWatchlist ? 'bg-brand-accent text-white' : 'bg-brand-bg/70 text-brand-muted hover:text-white'} border border-brand-accent/40 backdrop-blur-md flex items-center justify-center text-xs transition-colors shadow-md">
+                                <i class="fa-solid ${movie.isWatchlist ? 'fa-bookmark' : 'fa-plus'}"></i>
+                            </button>
+                            <button onclick="event.stopPropagation(); toggleFavorite('${movie.id}')" 
+                                    class="w-7 h-7 rounded-full ${movie.isFavorite ? 'bg-brand-magenta text-white' : 'bg-brand-bg/70 text-brand-muted hover:text-white'} border border-brand-magenta/40 backdrop-blur-md flex items-center justify-center text-xs transition-colors shadow-md">
+                                <i class="fa-solid fa-heart"></i>
+                            </button>
+                        </div>
+
+                        <!-- Hover View Button Overlay -->
+                        <div class="absolute inset-0 bg-brand-bg/40 backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <span class="px-4 py-2 rounded-full bg-brand-accent text-white font-bold text-xs shadow-cosmic-glow flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-info"></i> View Details
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Card Content -->
+                    <div class="p-4 space-y-2 bg-brand-card/90 flex-grow flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between text-[11px] text-brand-muted mb-1">
+                                <span>${movie.year} • ${movie.duration}</span>
+                                <span class="font-bold text-brand-gold flex items-center gap-1">
+                                    <i class="fa-solid fa-star gold-star text-[10px]"></i> ${movie.rating}
+                                </span>
+                            </div>
+                            <h3 onclick="openMovieModal('${movie.id}')" class="font-display font-bold text-base text-white hover:text-brand-violet transition-colors cursor-pointer line-clamp-1">
+                                ${movie.title}
+                            </h3>
+                        </div>
+
+                        <div class="pt-2 border-t border-brand-border/30 flex items-center justify-between text-[11px]">
+                            <span class="px-2 py-0.5 rounded-md ${getStatusClass(movie.status)} text-[10px] font-semibold">
+                                ${movie.status}
+                            </span>
+                            <button onclick="openMovieModal('${movie.id}')" class="text-brand-violet hover:text-white font-semibold flex items-center gap-1">
+                                Info <i class="fa-solid fa-chevron-right text-[8px]"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'Watched': return 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+                case 'In Progress': return 'bg-blue-500/20 text-blue-300 border border-blue-500/30';
+                case 'To Watch': return 'bg-brand-accent/20 text-brand-violet border border-brand-accent/30';
+                default: return 'bg-brand-magenta/20 text-brand-magenta border border-brand-magenta/30';
+            }
+        }
+
+        // Render Popular and Recent grids
+        function renderGrids() {
+            const popularGrid = document.getElementById('popularGrid');
+            const recentGrid = document.getElementById('recentGrid');
+
+            // Filter movies by active genre
+            const filtered = movieData.filter(m => activeGenre === 'All' || m.genre === activeGenre);
+
+            const popularList = filtered.filter(m => m.popular);
+            const recentList = filtered.filter(m => m.recent || !m.popular);
+
+            if (popularGrid) {
+                if (popularList.length === 0) {
+                    popularGrid.innerHTML = `<div class="col-span-full py-12 text-center text-brand-muted text-sm glass-card rounded-2xl">No popular titles found for genre: <strong class="text-white">${activeGenre}</strong></div>`;
+                } else {
+                    popularGrid.innerHTML = popularList.map(m => createMovieCardHTML(m)).join('');
+                    popularList.forEach(m => renderPosterCanvas(`canvas-${m.id}`, m.colors, m.title));
+                }
+            }
+
+            if (recentGrid) {
+                if (recentList.length === 0) {
+                    recentGrid.innerHTML = `<div class="col-span-full py-12 text-center text-brand-muted text-sm glass-card rounded-2xl">No recent additions for genre: <strong class="text-white">${activeGenre}</strong></div>`;
+                } else {
+                    recentGrid.innerHTML = recentList.map(m => createMovieCardHTML(m)).join('');
+                    recentList.forEach(m => renderPosterCanvas(`canvas-${m.id}`, m.colors, m.title));
+                }
+            }
+        }
+
+        // Render Genre Filter Buttons
+        function renderGenreButtons() {
+            const container = document.getElementById('genreContainer');
+            if (!container) return;
+
+            container.innerHTML = genres.map(g => {
+                const isActive = g === activeGenre;
+                return `
+                    <button onclick="selectGenre('${g}')" 
+                            class="px-5 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap shadow-sm ${
+                                isActive 
+                                ? 'bg-purple-btn text-white shadow-cosmic-glow scale-105' 
+                                : 'bg-brand-card hover:bg-brand-cardHover border border-brand-border/60 text-brand-muted hover:text-white'
+                            }">
+                        ${g}
+                    </button>
+                `;
+            }).join('');
+
+            const countEl = document.getElementById('genreFilterCount');
+            if (countEl) countEl.innerText = activeGenre === 'All' ? 'All Categories' : activeGenre;
+        }
+
+        function selectGenre(genre) {
+            activeGenre = genre;
+            renderGenreButtons();
+            renderGrids();
+        }
+
+        // Toggle Watchlist State
+        function toggleWatchlist(movieId) {
+            const movie = movieData.find(m => m.id === movieId);
+            if (!movie) return;
+
+            movie.isWatchlist = !movie.isWatchlist;
+            showToast(movie.isWatchlist ? `Added "${movie.title}" to Watchlist` : `Removed "${movie.title}" from Watchlist`);
+
+            // Update stats counter
+            updateStats();
+            renderGrids();
+
+            // Update Hero button if it's the hero movie
+            if (movieId === 'hero-featured') {
+                const icon = document.getElementById('hero-watchlist-icon');
+                const text = document.getElementById('hero-watchlist-text');
+                if (icon && text) {
+                    icon.className = movie.isWatchlist ? 'fa-solid fa-check text-emerald-400' : 'fa-solid fa-plus text-brand-magenta';
+                    text.innerText = movie.isWatchlist ? 'In Your Watchlist' : 'Add Featured to Watchlist';
+                }
+            }
+        }
+
+        // Toggle Favorite State
+        function toggleFavorite(movieId) {
+            const movie = movieData.find(m => m.id === movieId);
+            if (!movie) return;
+
+            movie.isFavorite = !movie.isFavorite;
+            showToast(movie.isFavorite ? `Favorited "${movie.title}"` : `Removed "${movie.title}" from Favorites`);
+
+            updateStats();
+            renderGrids();
+        }
+
+        // Update Dynamic Stats Counter
+        function updateStats() {
+            const total = movieData.length;
+            const watched = movieData.filter(m => m.status === 'Watched').length;
+            const toWatch = movieData.filter(m => m.isWatchlist).length;
+            const favorites = movieData.filter(m => m.isFavorite).length;
+
+            document.getElementById('stat-total').innerText = total;
+            document.getElementById('stat-watched').innerText = watched;
+            document.getElementById('stat-towatch').innerText = toWatch;
+            document.getElementById('stat-favorites').innerText = favorites;
+
+            const navCount = document.getElementById('nav-watchlist-count');
+            if (navCount) navCount.innerText = toWatch;
+        }
+
+        // Open Movie Detail Modal
+        function openMovieModal(movieId) {
+            const movie = movieData.find(m => m.id === movieId);
+            if (!movie) return;
+
+            document.getElementById('modalTitle').innerText = movie.title;
+            document.getElementById('modalGenre').innerText = movie.genre;
+            document.getElementById('modalMeta').innerText = `${movie.year} • ${movie.duration} • Directed by Cosmic Visionary`;
+            document.getElementById('modalOverview').innerText = movie.overview;
+            document.getElementById('modalRating').innerHTML = `<i class="fa-solid fa-star gold-star text-lg"></i> ${movie.rating}`;
+            document.getElementById('modalStatusTag').innerText = `Status: ${movie.status}`;
+
+            // Render Modal Poster Canvas
+            renderPosterCanvas('modalCanvas', movie.colors, movie.title);
+
+            // Modal Buttons
+            const wlBtn = document.getElementById('modalWatchlistBtn');
+            wlBtn.onclick = () => { toggleWatchlist(movie.id); openMovieModal(movie.id); };
+            wlBtn.innerHTML = movie.isWatchlist ? '<i class="fa-solid fa-check"></i> On Watchlist' : '<i class="fa-solid fa-plus"></i> Add to Watchlist';
+
+            const favBtn = document.getElementById('modalFavBtn');
+            favBtn.onclick = () => { toggleFavorite(movie.id); openMovieModal(movie.id); };
+            favBtn.innerHTML = movie.isFavorite ? '<i class="fa-solid fa-heart text-brand-magenta"></i> Favorited' : '<i class="fa-regular fa-heart"></i> Favorite';
+
+            const modal = document.getElementById('movieModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+        }
+
+        function closeMovieModal() {
+            const modal = document.getElementById('movieModal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        // Toast Notification System
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            if (!toast || !toastMsg) return;
+
+            toastMsg.innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Search Input Filtering
+        document.getElementById('searchInput')?.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            if (!query) {
+                renderGrids();
+                return;
+            }
+
+            const filtered = movieData.filter(m => 
+                m.title.toLowerCase().includes(query) || 
+                m.genre.toLowerCase().includes(query)
+            );
+
+            const popularGrid = document.getElementById('popularGrid');
+            if (popularGrid) {
+                if (filtered.length === 0) {
+                    popularGrid.innerHTML = `<div class="col-span-full py-12 text-center text-brand-muted text-sm glass-card rounded-2xl">No movies found matching "${query}"</div>`;
+                } else {
+                    popularGrid.innerHTML = filtered.map(m => createMovieCardHTML(m)).join('');
+                    filtered.forEach(m => renderPosterCanvas(`canvas-${m.id}`, m.colors, m.title));
+                }
+            }
+        });
+
+        window.onload = function() {
+            // Render hero canvas poster artwork
+            const heroMovie = movieData.find(m => m.id === 'hero-featured');
+            if (heroMovie) {
+                renderPosterCanvas('featuredCanvas', heroMovie.colors, heroMovie.title);
+            }
+
+            // Render UI sections
+            renderGenreButtons();
+            renderGrids();
+            updateStats();
+        };
+    </script>
+</body>
+</html>
