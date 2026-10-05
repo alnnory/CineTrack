@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineTrack — Your Movies. Your Story.</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg: '#0B0614',
+                            deep: '#130A20',
+                            card: '#211432',
+                            elevated: '#2B1940',
+                            cardHover: '#341E4E',
+                            purple: '#7B2CDB',
+                            violet: '#A855F7',
+                            magenta: '#EC168C',
+                            hotpink: '#FF3DBB',
+                            gold: '#F5C542',
+                            text: '#FFFFFF',
+                            secondary: '#C4B8D4',
+                            muted: '#8E829F',
+                            border: '#3B205C'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'cosmic-glow': '0 0 35px -5px rgba(123, 44, 219, 0.5), 0 0 20px -5px rgba(236, 22, 140, 0.35)',
+                        'magenta-glow': '0 0 25px 0px rgba(236, 22, 140, 0.45)',
+                        'pink-glow': '0 0 30px 2px rgba(255, 61, 187, 0.4)',
+                        'gold-glow': '0 0 20px 0px rgba(245, 197, 66, 0.35)',
+                        'card-depth': '0 15px 35px -10px rgba(0, 0, 0, 0.75)',
+                    },
+                    backgroundImage: {
+                        'hero-glow': 'radial-gradient(ellipse at 50% 30%, rgba(236, 22, 140, 0.22) 0%, rgba(123, 44, 219, 0.3) 35%, rgba(19, 10, 32, 0.95) 75%, rgba(11, 6, 20, 1) 100%)',
+                        'purple-magenta-btn': 'linear-gradient(135deg, #EC168C 0%, #7B2CDB 100%)',
+                        'violet-pink-btn': 'linear-gradient(135deg, #A855F7 0%, #FF3DBB 100%)',
+                        'card-gradient': 'linear-gradient(180deg, rgba(43, 25, 64, 0.7) 0%, rgba(33, 20, 50, 0.9) 100%)',
+                        'glow-line': 'linear-gradient(90deg, transparent 0%, #EC168C 30%, #A855F7 70%, transparent 100%)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0614;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2B1940;
+            border-radius: 4px;
+            border: 1px solid #3B205C;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7B2CDB;
+        }
+
+        /* Ambient Animations */
+        @keyframes pulseAura {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(1.04); }
+        }
+        .animate-aura {
+            animation: pulseAura 8s infinite ease-in-out;
+        }
+
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-float {
+            animation: floatSlow 6s infinite ease-in-out;
+        }
+
+        /* Glassmorphic Utilities */
+        .glass-nav {
+            background: rgba(11, 6, 20, 0.82);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(123, 44, 219, 0.25);
+        }
+
+        .glass-card {
+            background: rgba(33, 20, 50, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(123, 44, 219, 0.22);
+        }
+        .glass-card:hover {
+            border-color: rgba(236, 22, 140, 0.45);
+            box-shadow: 0 10px 30px -5px rgba(123, 44, 219, 0.3);
+        }
+
+        .gold-star-glow {
+            color: #F5C542;
+            text-shadow: 0 0 10px rgba(245, 197, 66, 0.6);
+        }
+
+        /* Hide scrollbars for sliders */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body class="bg-brand-bg text-brand-text font-sans antialiased min-h-screen flex flex-col selection:bg-brand-magenta selection:text-white overflow-x-hidden">
+
+    <!-- 1. NAVIGATION BAR -->
+    <header class="fixed top-0 left-0 right-0 z-50 glass-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Brand Logo with Film Reel & Play Emblem -->
+            <a href="#hero" class="flex items-center gap-3.5 group">
+                <div class="relative w-11 h-11 rounded-xl bg-gradient-to-br from-brand-purple via-brand-magenta to-brand-gold p-[2px] shadow-cosmic-glow transform group-hover:rotate-6 transition-all duration-300">
+                    <div class="w-full h-full bg-brand-bg rounded-[10px] flex items-center justify-center relative overflow-hidden">
+                        <!-- Custom SVG Logo: Film Reel + Play Symbol -->
+                        <svg class="w-6 h-6 text-brand-gold group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" stroke-dasharray="2 2" />
+                            <circle cx="12" cy="12" r="4" stroke="#A855F7" stroke-width="1.5" />
+                            <polygon points="10,8 16,12 10,16" fill="#EC168C" />
+                            <circle cx="12" cy="5" r="1" fill="#F5C542" />
+                            <circle cx="12" cy="19" r="1" fill="#F5C542" />
+                            <circle cx="5" cy="12" r="1" fill="#F5C542" />
+                            <circle cx="19" cy="12" r="1" fill="#F5C542" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-display font-black text-2xl tracking-wider text-white flex items-center gap-1">
+                        CINETRACK
+                    </span>
+                    <span class="text-[9px] tracking-[0.2em] text-brand-secondary uppercase font-bold -mt-1">YOUR MOVIES. YOUR STORY.</span>
+                </div>
+            </a>
+
+            <!-- Desktop Links -->
+            <nav class="hidden md:flex items-center gap-1 bg-brand-deep/80 px-5 py-2 rounded-full border border-brand-border/60">
+                <a href="#hero" class="px-4 py-1.5 rounded-full text-xs font-semibold text-white bg-brand-purple/30 border border-brand-purple/50 shadow-sm transition-all hover:text-white">Home</a>
+                <a href="#highlights" class="px-4 py-1.5 rounded-full text-xs font-medium text-brand-secondary hover:text-white hover:bg-brand-elevated/60 transition-all">Highlights</a>
+                <a href="#features" class="px-4 py-1.5 rounded-full text-xs font-medium text-brand-secondary hover:text-white hover:bg-brand-elevated/60 transition-all">Features</a>
+                <a href="#how-it-works" class="px-4 py-1.5 rounded-full text-xs font-medium text-brand-secondary hover:text-white hover:bg-brand-elevated/60 transition-all">How It Works</a>
+                <a href="#showcase" class="px-4 py-1.5 rounded-full text-xs font-medium text-brand-secondary hover:text-white hover:bg-brand-elevated/60 transition-all">Showcase</a>
+            </nav>
+
+            <!-- Navigation Right CTA -->
+            <div class="flex items-center gap-3">
+                <button onclick="triggerCTA('Get Started')" class="hidden sm:flex px-5 py-2.5 rounded-full bg-purple-magenta-btn hover:opacity-95 text-white font-bold text-xs tracking-wider uppercase shadow-magenta-glow transform hover:-translate-y-0.5 transition-all items-center gap-2">
+                    <i class="fa-solid fa-play text-[10px] text-brand-gold"></i> Get Started
+                </button>
+                <button onclick="toggleMobileMenu()" class="md:hidden w-10 h-10 rounded-xl bg-brand-deep border border-brand-border flex items-center justify-center text-white">
+                    <i class="fa-solid fa-bars text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer -->
+        <div id="mobileMenu" class="hidden md:hidden bg-brand-deep/95 border-b border-brand-border px-6 py-4 flex-col gap-3 text-sm font-medium">
+            <a href="#hero" onclick="toggleMobileMenu()" class="text-white py-1">Home</a>
+            <a href="#highlights" onclick="toggleMobileMenu()" class="text-brand-secondary py-1">Highlights</a>
+            <a href="#features" onclick="toggleMobileMenu()" class="text-brand-secondary py-1">Features</a>
+            <a href="#how-it-works" onclick="toggleMobileMenu()" class="text-brand-secondary py-1">How It Works</a>
+            <a href="#showcase" onclick="toggleMobileMenu()" class="text-brand-secondary py-1">Showcase</a>
+            <button onclick="triggerCTA('Get Started'); toggleMobileMenu();" class="mt-2 w-full py-2.5 rounded-full bg-purple-magenta-btn text-white font-bold text-xs uppercase tracking-wider text-center">Get Started</button>
+        </div>
+    </header>
+
+    <!-- 2. HERO / BRANDING SECTION -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center pt-28 pb-20 overflow-hidden bg-hero-glow">
+        
+        <!-- Interactive Cosmic Particle & Atmospheric Light Canvas -->
+        <canvas id="cosmicCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
+
+        <!-- Glow Orbs in Background -->
+        <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-brand-purple/20 rounded-full blur-[140px] pointer-events-none animate-aura"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] h-[380px] bg-brand-magenta/20 rounded-full blur-[110px] pointer-events-none animate-aura" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/4 right-1/4 w-[280px] h-[280px] bg-brand-gold/10 rounded-full blur-[90px] pointer-events-none"></div>
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center flex flex-col items-center space-y-8">
+            
+            <!-- Hero Emblem Tag -->
+            <div class="animate-float inline-flex items-center gap-3 px-4 py-2 rounded-full bg-brand-elevated/80 border border-brand-purple/50 text-white text-xs font-bold tracking-widest uppercase shadow-cosmic-glow">
+                <span class="w-2 h-2 rounded-full bg-brand-magenta animate-ping"></span>
+                <span class="text-brand-gold"><i class="fa-solid fa-sparkles mr-1"></i> PERSONAL MOVIE UNIVERSE</span>
+            </div>
+
+            <!-- Stylized CineTrack Emblem in Hero -->
+            <div class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-gradient-to-tr from-brand-purple via-brand-magenta to-brand-gold p-[3px] shadow-cosmic-glow group cursor-pointer" onclick="triggerCTA('CineTrack Core Emblem')">
+                <div class="w-full h-full bg-brand-bg rounded-[22px] flex items-center justify-center relative overflow-hidden group-hover:scale-95 transition-transform duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-br from-brand-purple/20 via-transparent to-brand-magenta/30"></div>
+                    <svg class="w-14 h-14 text-brand-gold transform group-hover:rotate-12 transition-transform duration-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 2" />
+                        <circle cx="12" cy="12" r="5" stroke="#A855F7" stroke-width="1.5" />
+                        <polygon points="10,8 16,12 10,16" fill="#FF3DBB" />
+                        <circle cx="12" cy="4" r="1.2" fill="#F5C542" />
+                        <circle cx="12" cy="20" r="1.2" fill="#F5C542" />
+                        <circle cx="4" cy="12" r="1.2" fill="#F5C542" />
+                        <circle cx="20" cy="12" r="1.2" fill="#F5C542" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Brand Title & Tagline -->
+            <div class="space-y-3 max-w-3xl">
+                <h1 class="font-display font-black text-5xl sm:text-7xl lg:text-8xl tracking-tight text-white uppercase leading-none">
+                    CINETRACK
+                </h1>
+                
+                <p class="font-display font-extrabold text-xl sm:text-3xl text-transparent bg-clip-text bg-gradient-to-r from-brand-gold via-brand-violet to-brand-hotpink tracking-wide">
+                    “Your Movies. Your Story.”
+                </p>
+
+                <!-- Brand Description -->
+                <p class="text-brand-secondary text-base sm:text-lg max-w-2xl font-normal leading-relaxed pt-2 mx-auto">
+                    CineTrack is a personal movie watchlist and tracking platform that helps you organize, discover, rate, review, and keep track of the movies you love.
+                </p>
+            </div>
+
+            <!-- Hero Dual CTAs -->
+            <div class="flex flex-wrap items-center justify-center gap-5 pt-4">
+                <button onclick="triggerCTA('Get Started Main')" class="px-8 py-4 rounded-full bg-purple-magenta-btn hover:opacity-95 text-white font-extrabold text-xs sm:text-sm tracking-widest uppercase shadow-pink-glow transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-3">
+                    <i class="fa-solid fa-rocket text-brand-gold"></i> GET STARTED
+                </button>
+                <a href="#showcase" class="px-8 py-4 rounded-full bg-brand-deep/90 hover:bg-brand-elevated border border-brand-purple/60 hover:border-brand-magenta text-white font-bold text-xs sm:text-sm tracking-widest uppercase transition-all duration-300 flex items-center gap-3 shadow-lg">
+                    <i class="fa-solid fa-film text-brand-violet"></i> EXPLORE MOVIES
+                </a>
+            </div>
+
+            <!-- Quick Metrics Counter Strip -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-12 border-t border-brand-border/40 w-full max-w-3xl text-center">
+                <div class="p-3 glass-card rounded-2xl">
+                    <div class="font-display font-black text-2xl text-white">100%</div>
+                    <div class="text-[10px] text-brand-muted uppercase tracking-widest mt-0.5">Personalized</div>
+                </div>
+                <div class="p-3 glass-card rounded-2xl">
+                    <div class="font-display font-black text-2xl text-brand-gold">4.9/5</div>
+                    <div class="text-[10px] text-brand-muted uppercase tracking-widest mt-0.5">User Score</div>
+                </div>
+                <div class="p-3 glass-card rounded-2xl">
+                    <div class="font-display font-black text-2xl text-brand-violet">Unlimited</div>
+                    <div class="text-[10px] text-brand-muted uppercase tracking-widest mt-0.5">Watchlists</div>
+                </div>
+                <div class="p-3 glass-card rounded-2xl">
+                    <div class="font-display font-black text-2xl text-brand-magenta">Zero Ads</div>
+                    <div class="text-[10px] text-brand-muted uppercase tracking-widest mt-0.5">Pure Cinema</div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 3. QUICK BRAND HIGHLIGHTS -->
+    <section id="highlights" class="py-16 bg-brand-deep/80 border-y border-brand-border/50 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- Card 1: WATCH -->
+                <div class="glass-card rounded-2xl p-6 border border-brand-border hover:border-brand-purple/60 transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-2xl bg-brand-purple/20 border border-brand-purple/40 flex items-center justify-center text-brand-violet text-xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-bookmark text-brand-gold"></i>
+                    </div>
+                    <h3 class="font-display font-black text-xl text-white tracking-wide uppercase">WATCH</h3>
+                    <p class="text-brand-secondary text-xs mt-2 leading-relaxed">Track what you want to watch with custom cosmic priority queues.</p>
+                </div>
+
+                <!-- Card 2: RATE -->
+                <div class="glass-card rounded-2xl p-6 border border-brand-border hover:border-brand-purple/60 transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-2xl bg-brand-magenta/20 border border-brand-magenta/40 flex items-center justify-center text-brand-magenta text-xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-star gold-star-glow"></i>
+                    </div>
+                    <h3 class="font-display font-black text-xl text-white tracking-wide uppercase">RATE</h3>
+                    <p class="text-brand-secondary text-xs mt-2 leading-relaxed">Give movies your personal rating with multi-tier star evaluations.</p>
+                </div>
+
+                <!-- Card 3: REVIEW -->
+                <div class="glass-card rounded-2xl p-6 border border-brand-border hover:border-brand-purple/60 transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-2xl bg-brand-violet/20 border border-brand-violet/40 flex items-center justify-center text-brand-violet text-xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-pen-nib text-brand-hotpink"></i>
+                    </div>
+                    <h3 class="font-display font-black text-xl text-white tracking-wide uppercase">REVIEW</h3>
+                    <p class="text-brand-secondary text-xs mt-2 leading-relaxed">Write and save your thoughts, detailed critiques, and movie quotes.</p>
+                </div>
+
+                <!-- Card 4: REMEMBER -->
+                <div class="glass-card rounded-2xl p-6 border border-brand-border hover:border-brand-purple/60 transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-2xl bg-brand-gold/20 border border-brand-gold/40 flex items-center justify-center text-brand-gold text-xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-clock-rotate-left text-brand-gold"></i>
+                    </div>
+                    <h3 class="font-display font-black text-xl text-white tracking-wide uppercase">REMEMBER</h3>
+                    <p class="text-brand-secondary text-xs mt-2 leading-relaxed">Keep your movie history organized across years, genres, and directors.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. FEATURES SECTION -->
+    <section id="features" class="py-24 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
+                <span class="text-brand-gold text-xs font-bold tracking-widest uppercase">POWERFUL TOOLSET</span>
+                <h2 class="font-display font-black text-3xl sm:text-5xl text-white tracking-tight">
+                    Everything You Need for Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-violet to-brand-magenta">Movie Collection</span>
+                </h2>
+                <p class="text-brand-secondary text-sm">Designed specifically for movie enthusiasts who desire complete control over their cinematic journey.</p>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Feature 1 -->
+                <div class="glass-card rounded-3xl p-8 border border-brand-border hover:border-brand-purple/80 transition-all duration-300 flex flex-col justify-between group">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-brand-purple/20 border border-brand-purple/40 flex items-center justify-center text-brand-violet text-2xl mb-6 group-hover:rotate-6 transition-transform">
+                            <i class="fa-solid fa-clapperboard"></i>
+                        </div>
+                        <h3 class="font-display font-bold text-2xl text-white mb-2">🎬 Movie Collection</h3>
+                        <p class="text-brand-secondary text-xs sm:text-sm leading-relaxed">
+                            Organize all your movies in one sleek place. Custom categories, tagging systems, and instant cloud sync across devices.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-brand-border/40 text-xs font-semibold text-brand-violet flex items-center gap-2">
+                        <span>Smart Filtering</span> <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="glass-card rounded-3xl p-8 border border-brand-border hover:border-brand-purple/80 transition-all duration-300 flex flex-col justify-between group">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-brand-magenta/20 border border-brand-magenta/40 flex items-center justify-center text-brand-magenta text-2xl mb-6 group-hover:rotate-6 transition-transform">
+                            <i class="fa-solid fa-bookmark"></i>
+                        </div>
+                        <h3 class="font-display font-bold text-2xl text-white mb-2">🔖 Watchlist</h3>
+                        <p class="text-brand-secondary text-xs sm:text-sm leading-relaxed">
+                            Save movies you want to watch later. Receive reminders for re-releases, physical editions, or theater screenings.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-brand-border/40 text-xs font-semibold text-brand-magenta flex items-center gap-2">
+                        <span>Priority Queueing</span> <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="glass-card rounded-3xl p-8 border border-brand-border hover:border-brand-purple/80 transition-all duration-300 flex flex-col justify-between group">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-brand-gold/20 border border-brand-gold/40 flex items-center justify-center text-brand-gold text-2xl mb-6 group-hover:rotate-6 transition-transform">
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <h3 class="font-display font-bold text-2xl text-white mb-2">⭐ Ratings & Reviews</h3>
+                        <p class="text-brand-secondary text-xs sm:text-sm leading-relaxed">
+                            Rate movies on a 5-star precision scale and write personal critiques to capture exactly how each story made you feel.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-brand-border/40 text-xs font-semibold text-brand-gold flex items-center gap-2">
+                        <span>Detailed Journaling</span> <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </div>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="glass-card rounded-3xl p-8 border border-brand-border hover:border-brand-purple/80 transition-all duration-300 flex flex-col justify-between group">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-brand-hotpink/20 border border-brand-hotpink/40 flex items-center justify-center text-brand-hotpink text-2xl mb-6 group-hover:rotate-6 transition-transform">
+                            <i class="fa-solid fa-heart"></i>
+                        </div>
+                        <h3 class="font-display font-bold text-2xl text-white mb-2">❤️ Favorites</h3>
+                        <p class="text-brand-secondary text-xs sm:text-sm leading-relaxed">
+                            Keep your all-time favorite movies easily accessible in an immortal hall of fame layout designed for high visual impact.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-brand-border/40 text-xs font-semibold text-brand-hotpink flex items-center gap-2">
+                        <span>Hall of Fame Display</span> <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </div>
+                </div>
+
+                <!-- Feature 5 (Wide Analytics Card with Interactive Visual Chart Preview) -->
+                <div class="glass-card rounded-3xl p-8 border border-brand-border hover:border-brand-purple/80 transition-all duration-300 md:col-span-2 flex flex-col justify-between group">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                        <div class="md:col-span-7 space-y-4">
+                            <div class="w-14 h-14 rounded-2xl bg-brand-violet/20 border border-brand-violet/40 flex items-center justify-center text-brand-violet text-2xl group-hover:rotate-6 transition-transform">
+                                <i class="fa-solid fa-chart-pie"></i>
+                            </div>
+                            <h3 class="font-display font-bold text-2xl text-white">📊 Movie Statistics</h3>
+                            <p class="text-brand-secondary text-xs sm:text-sm leading-relaxed">
+                                View your overall movie activity, genre breakdowns, total runtime hours, favorite directors, and annual watching trends with clean cosmic charts.
+                            </p>
+                            <div class="flex items-center gap-4 text-xs text-brand-gold font-bold">
+                                <span><i class="fa-solid fa-check mr-1"></i> Genre Distribution</span>
+                                <span><i class="fa-solid fa-check mr-1"></i> Watch Time Analytics</span>
+                            </div>
+                        </div>
+
+                        <!-- Mini Mock Stats Widget -->
+                        <div class="md:col-span-5 bg-brand-deep/90 p-4 rounded-2xl border border-brand-border space-y-3">
+                            <div class="flex justify-between text-xs">
+                                <span class="text-brand-secondary font-medium">Monthly Watch Runtime</span>
+                                <span class="text-brand-gold font-bold">142 hrs</span>
+                            </div>
+                            <!-- Bar Chart Visual -->
+                            <div class="space-y-2 pt-1">
+                                <div>
+                                    <div class="flex justify-between text-[10px] text-brand-muted mb-1">
+                                        <span>Sci-Fi</span>
+                                        <span>42%</span>
+                                    </div>
+                                    <div class="w-full h-2 bg-brand-card rounded-full overflow-hidden">
+                                        <div class="h-full bg-brand-purple w-[42%] rounded-full"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-[10px] text-brand-muted mb-1">
+                                        <span>Action & Thriller</span>
+                                        <span>35%</span>
+                                    </div>
+                                    <div class="w-full h-2 bg-brand-card rounded-full overflow-hidden">
+                                        <div class="h-full bg-brand-magenta w-[35%] rounded-full"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-[10px] text-brand-muted mb-1">
+                                        <span>Fantasy</span>
+                                        <span>23%</span>
+                                    </div>
+                                    <div class="w-full h-2 bg-brand-card rounded-full overflow-hidden">
+                                        <div class="h-full bg-brand-gold w-[23%] rounded-full"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. HOW IT WORKS -->
+    <section id="how-it-works" class="py-20 bg-brand-deep/90 border-y border-brand-border/60 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-2xl mx-auto mb-16 space-y-2">
+                <span class="text-brand-magenta text-xs font-bold tracking-widest uppercase">SIMPLE 4-STEP PROCESS</span>
+                <h2 class="font-display font-black text-3xl sm:text-4xl text-white">How CineTrack Works</h2>
+                <p class="text-brand-secondary text-sm">Start cataloging your personal cinema journey in seconds.</p>
+            </div>
+
+            <!-- Steps Grid connected with glowing line -->
+            <div class="relative">
+                <!-- Connecting Line (Desktop) -->
+                <div class="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-glow-line -translate-y-6 z-0"></div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+                    
+                    <!-- Step 1 -->
+                    <div class="glass-card rounded-2xl p-6 border border-brand-border flex flex-col items-center text-center group hover:border-brand-purple transition-all">
+                        <div class="w-16 h-16 rounded-full bg-brand-bg border-2 border-brand-purple text-brand-gold font-display font-black text-xl flex items-center justify-center shadow-cosmic-glow mb-5 group-hover:scale-110 transition-transform">
+                            01
+                        </div>
+                        <h4 class="font-display font-bold text-lg text-white uppercase tracking-wider mb-2">DISCOVER</h4>
+                        <p class="text-brand-secondary text-xs leading-relaxed">Browse thousands of curated movies or import your existing collection effortlessly.</p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="glass-card rounded-2xl p-6 border border-brand-border flex flex-col items-center text-center group hover:border-brand-magenta transition-all">
+                        <div class="w-16 h-16 rounded-full bg-brand-bg border-2 border-brand-magenta text-brand-magenta font-display font-black text-xl flex items-center justify-center shadow-magenta-glow mb-5 group-hover:scale-110 transition-transform">
+                            02
+                        </div>
+                        <h4 class="font-display font-bold text-lg text-white uppercase tracking-wider mb-2">TRACK</h4>
+                        <p class="text-brand-secondary text-xs leading-relaxed">Add upcoming movies to your personal cosmic watchlist with priority tags.</p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="glass-card rounded-2xl p-6 border border-brand-border flex flex-col items-center text-center group hover:border-brand-violet transition-all">
+                        <div class="w-16 h-16 rounded-full bg-brand-bg border-2 border-brand-violet text-brand-violet font-display font-black text-xl flex items-center justify-center shadow-cosmic-glow mb-5 group-hover:scale-110 transition-transform">
+                            03
+                        </div>
+                        <h4 class="font-display font-bold text-lg text-white uppercase tracking-wider mb-2">WATCH</h4>
+                        <p class="text-brand-secondary text-xs leading-relaxed">Mark titles as watched when completed and log your viewing date history.</p>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="glass-card rounded-2xl p-6 border border-brand-border flex flex-col items-center text-center group hover:border-brand-gold transition-all">
+                        <div class="w-16 h-16 rounded-full bg-brand-bg border-2 border-brand-gold text-brand-gold font-display font-black text-xl flex items-center justify-center shadow-gold-glow mb-5 group-hover:scale-110 transition-transform">
+                            04
+                        </div>
+                        <h4 class="font-display font-bold text-lg text-white uppercase tracking-wider mb-2">RATE</h4>
+                        <p class="text-brand-secondary text-xs leading-relaxed">Give custom star ratings and publish personal reviews to reflect your thoughts.</p>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 6. MOVIE SHOWCASE -->
+    <section id="showcase" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div>
+                <span class="text-brand-gold text-xs font-bold tracking-widest uppercase">ORIGINAL SHOWCASE</span>
+                <h2 class="font-display font-black text-3xl sm:text-5xl text-white mt-1">Explore Your Universe</h2>
+                <p class="text-brand-secondary text-sm mt-1">Preview how fictional cinematic masterpieces appear inside CineTrack.</p>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar" id="showcaseFilters">
+                <button onclick="filterShowcase('All')" class="filter-btn active px-4 py-1.5 rounded-full text-xs font-bold bg-brand-purple text-white shadow-cosmic-glow">All Titles</button>
+                <button onclick="filterShowcase('Sci-Fi')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold bg-brand-card hover:bg-brand-elevated text-brand-secondary hover:text-white border border-brand-border">Sci-Fi</button>
+                <button onclick="filterShowcase('Action')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold bg-brand-card hover:bg-brand-elevated text-brand-secondary hover:text-white border border-brand-border">Action</button>
+                <button onclick="filterShowcase('Fantasy')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold bg-brand-card hover:bg-brand-elevated text-brand-secondary hover:text-white border border-brand-border">Fantasy</button>
+            </div>
+        </div>
+
+        <!-- Dynamic Grid of Fictional Poster Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6" id="movieGrid">
+            <!-- Populated via JavaScript canvas renderer -->
+        </div>
+    </section>
+
+    <!-- 7. FINAL CALL TO ACTION -->
+    <section class="py-24 relative overflow-hidden bg-brand-deep border-t border-brand-border/60">
+        <!-- Background Aura Glow -->
+        <div class="absolute inset-0 bg-gradient-to-r from-brand-purple/20 via-brand-magenta/30 to-brand-purple/20 pointer-events-none blur-3xl"></div>
+
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
+            <div class="w-16 h-16 mx-auto rounded-3xl bg-purple-magenta-btn p-0.5 shadow-pink-glow animate-float">
+                <div class="w-full h-full bg-brand-bg rounded-[22px] flex items-center justify-center text-brand-gold">
+                    <i class="fa-solid fa-film text-2xl"></i>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <h2 class="font-display font-black text-4xl sm:text-6xl text-white tracking-tight">
+                    Ready for your next movie?
+                </h2>
+                <p class="text-brand-secondary text-base sm:text-xl max-w-xl mx-auto font-normal">
+                    Start building your personal movie collection with CineTrack today.
+                </p>
+            </div>
+
+            <div class="pt-2">
+                <button onclick="triggerCTA('Start Tracking Final CTA')" class="px-10 py-5 rounded-full bg-purple-magenta-btn hover:opacity-95 text-white font-extrabold text-sm sm:text-base tracking-widest uppercase shadow-pink-glow transform hover:-translate-y-1 transition-all duration-300 inline-flex items-center gap-3">
+                    <i class="fa-solid fa-clapperboard text-brand-gold"></i> START TRACKING
+                </button>
+            </div>
+
+            <div class="text-xs text-brand-muted pt-4">
+                No credit card required • Instant access to cataloging tools
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. FOOTER -->
+    <footer class="bg-brand-bg border-t border-brand-border/80 text-brand-muted py-12 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-8 mb-8">
+                
+                <!-- Brand Info -->
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-purple via-brand-magenta to-brand-gold p-[2px]">
+                        <div class="w-full h-full bg-brand-bg rounded-[10px] flex items-center justify-center">
+                            <i class="fa-solid fa-film text-brand-gold text-xs"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="font-display font-black text-xl text-white tracking-wider">CINETRACK</span>
+                        <p class="text-[10px] text-brand-secondary uppercase font-bold tracking-widest -mt-1">YOUR MOVIES. YOUR STORY.</p>
+                    </div>
+                </div>
+
+                <!-- Footer Links -->
+                <div class="flex flex-wrap justify-center gap-8 text-xs font-semibold text-brand-secondary">
+                    <a href="#hero" class="hover:text-white transition-colors">Home</a>
+                    <a href="#highlights" class="hover:text-white transition-colors">Highlights</a>
+                    <a href="#features" class="hover:text-white transition-colors">Features</a>
+                    <a href="#how-it-works" class="hover:text-white transition-colors">How It Works</a>
+                    <a href="#showcase" class="hover:text-white transition-colors">Showcase</a>
+                    <a href="#" onclick="showToast('Privacy Policy Page'); return false;" class="hover:text-white transition-colors">Privacy</a>
+                    <a href="#" onclick="showToast('Terms of Service Page'); return false;" class="hover:text-white transition-colors">Terms</a>
+                </div>
+
+                <!-- Social Icons -->
+                <div class="flex items-center gap-3 text-sm">
+                    <a href="#" onclick="showToast('Twitter / X Community'); return false;" class="w-8 h-8 rounded-full bg-brand-card flex items-center justify-center hover:text-white hover:bg-brand-purple transition-all"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" onclick="showToast('Discord Community'); return false;" class="w-8 h-8 rounded-full bg-brand-card flex items-center justify-center hover:text-white hover:bg-brand-purple transition-all"><i class="fa-brands fa-discord"></i></a>
+                    <a href="#" onclick="showToast('Instagram Feed'); return false;" class="w-8 h-8 rounded-full bg-brand-card flex items-center justify-center hover:text-white hover:bg-brand-purple transition-all"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <!-- Copyright Notice -->
+            <div class="pt-8 border-t border-brand-border/40 text-center text-xs text-brand-muted">
+                &copy; 2026 CineTrack. All rights reserved. Personal movie watchlist and tracking platform.
+            </div>
+        </div>
+    </footer>
+
+    <!-- MOVIE DETAIL MODAL -->
+    <div id="movieModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="relative w-full max-w-2xl glass-card rounded-3xl overflow-hidden shadow-2xl border border-brand-purple/60 max-h-[90vh] flex flex-col my-auto">
+            
+            <button onclick="closeMovieModal()" class="absolute top-4 right-4 z-30 w-10 h-10 rounded-full bg-brand-bg/80 text-white hover:bg-brand-magenta flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark text-base"></i>
+            </button>
+
+            <div class="overflow-y-auto">
+                <div class="relative h-64 sm:h-72 w-full bg-brand-deep">
+                    <canvas id="modalCanvas" class="w-full h-full object-cover"></canvas>
+                    <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-brand-card/30 to-transparent"></div>
+                    
+                    <div class="absolute bottom-6 left-6 right-6">
+                        <span id="modalGenre" class="text-[10px] font-bold px-3 py-1 rounded-full bg-brand-purple text-white uppercase tracking-wider">Sci-Fi</span>
+                        <h2 id="modalTitle" class="font-display font-black text-3xl sm:text-4xl text-white mt-2">Title</h2>
+                        <div class="flex items-center gap-4 text-xs text-brand-secondary mt-1">
+                            <span id="modalYear">2026</span>
+                            <span>•</span>
+                            <span id="modalRating" class="text-brand-gold font-bold flex items-center gap-1"><i class="fa-solid fa-star gold-star-glow"></i> 4.9</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    <div>
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-brand-gold mb-2">Overview</h4>
+                        <p id="modalOverview" class="text-xs sm:text-sm text-brand-secondary leading-relaxed">
+                            Overview text content...
+                        </p>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-4 border-t border-brand-border/50">
+                        <span id="modalStatus" class="px-3 py-1 rounded-full bg-brand-purple/20 text-brand-violet text-xs font-bold border border-brand-purple/40">Status: Watched</span>
+                        <button onclick="showToast('Added to personal library'); closeMovieModal();" class="px-6 py-2.5 rounded-full bg-purple-magenta-btn text-white text-xs font-bold uppercase tracking-wider shadow-magenta-glow">
+                            Log In CineTrack
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 glass-card px-5 py-3 rounded-2xl border border-brand-purple shadow-cosmic-glow text-white text-xs font-bold flex items-center gap-3 translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <i id="toastIcon" class="fa-solid fa-sparkles text-brand-gold text-base"></i>
+        <span id="toastMsg">Notification message</span>
+    </div>
+
+    <script>
+        // Fictional Movies Database
+        const fictionalMovies = [
+            {
+                id: 'm1',
+                title: 'Chronos: Edge of Infinity',
+                year: '2026',
+                genre: 'Sci-Fi',
+                rating: 4.9,
+                status: 'Watched',
+                overview: 'When the timeline fragments following a quantum star burst, a lone time navigator must traverse dying star systems to assemble the Chronos Relic before existence collapses.',
+                colors: ['#7B2CDB', '#EC168C', '#0B0614', '#F5C542']
+            },
+            {
+                id: 'm2',
+                title: 'Astral Horizon',
+                year: '2025',
+                genre: 'Sci-Fi',
+                rating: 4.8,
+                status: 'In Watchlist',
+                overview: 'Deep space explorers discover a cosmic rift leading to an infinite ocean of sentient starlight guarding ancient galactic secrets.',
+                colors: ['#00F2FE', '#A855F7', '#130A20', '#EC168C']
+            },
+            {
+                id: 'm3',
+                title: 'Neon Cyberpunk 2099',
+                year: '2026',
+                genre: 'Action',
+                rating: 4.7,
+                status: 'Watched',
+                overview: 'In a neon-drenched high-orbit megacity, a rogue courier uncovers a clandestine AI syndicate controlling human memories.',
+                colors: ['#FF0844', '#FF3DBB', '#0B0614', '#F5C542']
+            },
+            {
+                id: 'm4',
+                title: 'Velvet Shadow',
+                year: '2024',
+                genre: 'Action',
+                rating: 4.6,
+                status: 'In Watchlist',
+                overview: 'An exiled operative navigates a web of high-stakes deception across European capitals to retrieve a stolen biological key.',
+                colors: ['#43CBFF', '#7B2CDB', '#130A20', '#A855F7']
+            },
+            {
+                id: 'm5',
+                title: 'Aetheria: Lost City',
+                year: '2025',
+                genre: 'Fantasy',
+                rating: 4.9,
+                status: 'Watched',
+                overview: 'A guild of celestial alchemists journeys to ignite a dying magical sun inside a subterranean floating city.',
+                colors: ['#F5C542', '#EC168C', '#211432', '#FF3DBB']
+            }
+        ];
+
+        // Render Procedural Poster Art on HTML5 Canvas
+        function drawPoster(canvasId, colors, titleText) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = 300;
+            canvas.height = 450;
+
+            const c1 = colors[0] || '#7B2CDB';
+            const c2 = colors[1] || '#EC168C';
+            const c3 = colors[2] || '#0B0614';
+            const c4 = colors[3] || '#F5C542';
+
+            // Background
+            const bgGrad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            bgGrad.addColorStop(0, c3);
+            bgGrad.addColorStop(0.5, c1);
+            bgGrad.addColorStop(1, c3);
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Swirling Orbs
+            for (let i = 0; i < 3; i++) {
+                ctx.save();
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const r = 60 + Math.random() * 80;
+                const radGrad = ctx.createRadialGradient(x, y, 10, x, y, r);
+                radGrad.addColorStop(0, c2);
+                radGrad.addColorStop(1, 'transparent');
+                ctx.fillStyle = radGrad;
+                ctx.globalAlpha = 0.4;
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // Star Particles
+            ctx.fillStyle = '#FFFFFF';
+            for (let i = 0; i < 60; i++) {
+                const sx = Math.random() * canvas.width;
+                const sy = Math.random() * canvas.height;
+                ctx.globalAlpha = Math.random() * 0.8;
+                ctx.fillRect(sx, sy, 1.5, 1.5);
+            }
+
+            // Central Ring Emblem
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2 - 20);
+            ctx.strokeStyle = c4;
+            ctx.lineWidth = 1.5;
+            ctx.globalAlpha = 0.4;
+            ctx.beginPath();
+            ctx.arc(0, 0, 65, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.rotate(45 * Math.PI / 180);
+            ctx.strokeStyle = c2;
+            ctx.strokeRect(-35, -35, 70, 70);
+            ctx.restore();
+
+            // Bottom Gradient Overlay for typography legibility
+            const botGrad = ctx.createLinearGradient(0, canvas.height - 140, 0, canvas.height);
+            botGrad.addColorStop(0, 'transparent');
+            botGrad.addColorStop(1, '#0B0614');
+            ctx.fillStyle = botGrad;
+            ctx.globalAlpha = 0.95;
+            ctx.fillRect(0, canvas.height - 150, canvas.width, 150);
+
+            // Poster Title
+            ctx.globalAlpha = 1.0;
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 18px Outfit, sans-serif';
+            ctx.textAlign = 'center';
+
+            const words = titleText.split(' ');
+            if (words.length > 2) {
+                ctx.fillText(words.slice(0, 2).join(' '), canvas.width / 2, canvas.height - 50);
+                ctx.fillStyle = c4;
+                ctx.fillText(words.slice(2).join(' '), canvas.width / 2, canvas.height - 25);
+            } else {
+                ctx.fillText(titleText, canvas.width / 2, canvas.height - 35);
+            }
+        }
+
+        // Render Showcase Grid
+        function renderShowcase(movies) {
+            const grid = document.getElementById('movieGrid');
+            if (!grid) return;
+
+            grid.innerHTML = movies.map(m => `
+                <div class="glass-card rounded-2xl overflow-hidden border border-brand-border hover:border-brand-magenta transition-all duration-300 flex flex-col justify-between group cursor-pointer" onclick="openMovieModal('${m.id}')">
+                    <div class="relative aspect-[2/3] w-full overflow-hidden bg-brand-deep">
+                        <canvas id="poster-${m.id}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"></canvas>
+                        
+                        <div class="absolute top-3 left-3 z-10 bg-brand-bg/80 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-brand-purple/40 text-[10px] font-bold text-white">
+                            ${m.genre}
+                        </div>
+
+                        <div class="absolute top-3 right-3 z-10 bg-brand-bg/80 backdrop-blur-md px-2 py-0.5 rounded-full border border-brand-gold/40 text-[10px] font-bold text-brand-gold flex items-center gap-1">
+                            <i class="fa-solid fa-star gold-star-glow text-[9px]"></i> ${m.rating}
+                        </div>
+
+                        <div class="absolute inset-0 bg-brand-bg/40 backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <span class="px-3.5 py-1.5 rounded-full bg-brand-purple text-white font-bold text-xs shadow-cosmic-glow">
+                                View Details
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-brand-card/90 flex-grow flex flex-col justify-between">
+                        <div>
+                            <div class="text-[10px] text-brand-muted mb-1">${m.year}</div>
+                            <h3 class="font-display font-bold text-sm text-white line-clamp-1 group-hover:text-brand-violet transition-colors">
+                                ${m.title}
+                            </h3>
+                        </div>
+                        <div class="pt-3 border-t border-brand-border/30 mt-2 flex items-center justify-between text-[10px]">
+                            <span class="px-2 py-0.5 rounded ${m.status === 'Watched' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-brand-purple/20 text-brand-violet'} font-semibold">
+                                ${m.status}
+                            </span>
+                            <i class="fa-solid fa-chevron-right text-brand-muted group-hover:text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Draw Canvas Artworks
+            movies.forEach(m => drawPoster(`poster-${m.id}`, m.colors, m.title));
+        }
+
+        function filterShowcase(genre) {
+            const buttons = document.querySelectorAll('#showcaseFilters button');
+            buttons.forEach(btn => {
+                if (btn.innerText.includes(genre) || (genre === 'All' && btn.innerText.includes('All'))) {
+                    btn.className = 'filter-btn active px-4 py-1.5 rounded-full text-xs font-bold bg-brand-purple text-white shadow-cosmic-glow';
+                } else {
+                    btn.className = 'filter-btn px-4 py-1.5 rounded-full text-xs font-bold bg-brand-card hover:bg-brand-elevated text-brand-secondary hover:text-white border border-brand-border';
+                }
+            });
+
+            const filtered = genre === 'All' ? fictionalMovies : fictionalMovies.filter(m => m.genre === genre);
+            renderShowcase(filtered);
+        }
+
+        // Modal Logic
+        function openMovieModal(id) {
+            const movie = fictionalMovies.find(m => m.id === id);
+            if (!movie) return;
+
+            document.getElementById('modalTitle').innerText = movie.title;
+            document.getElementById('modalGenre').innerText = movie.genre;
+            document.getElementById('modalYear').innerText = movie.year;
+            document.getElementById('modalOverview').innerText = movie.overview;
+            document.getElementById('modalRating').innerHTML = `<i class="fa-solid fa-star gold-star-glow"></i> ${movie.rating}`;
+            document.getElementById('modalStatus').innerText = `Status: ${movie.status}`;
+
+            drawPoster('modalCanvas', movie.colors, movie.title);
+
+            const modal = document.getElementById('movieModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+        }
+
+        function closeMovieModal() {
+            const modal = document.getElementById('movieModal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        // Mobile Menu Drawer Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+            menu.classList.toggle('flex');
+        }
+
+        // Toast Notifications
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            if (!toast || !toastMsg) return;
+
+            toastMsg.innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function triggerCTA(action) {
+            showToast(`CineTrack Platform Access Requested: ${action}`);
+        }
+
+        // Interactive Cosmic Particle Background Engine
+        function initCosmicCanvas() {
+            const canvas = document.getElementById('cosmicCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            let width = canvas.width = canvas.parentElement.clientWidth;
+            let height = canvas.height = canvas.parentElement.clientHeight;
+
+            window.addEventListener('resize', () => {
+                if (canvas.parentElement) {
+                    width = canvas.width = canvas.parentElement.clientWidth;
+                    height = canvas.height = canvas.parentElement.clientHeight;
+                }
+            });
+
+            const particles = [];
+            const particleCount = 65;
+
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    radius: Math.random() * 2 + 0.5,
+                    color: Math.random() > 0.5 ? '#A855F7' : (Math.random() > 0.5 ? '#EC168C' : '#F5C542'),
+                    alpha: Math.random() * 0.7 + 0.2,
+                    vx: (Math.random() - 0.5) * 0.3,
+                    vy: (Math.random() - 0.5) * 0.3
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    if (p.x < 0) p.x = width;
+                    if (p.x > width) p.x = 0;
+                    if (p.y < 0) p.y = height;
+                    if (p.y > height) p.y = 0;
+
+                    ctx.save();
+                    ctx.globalAlpha = p.alpha;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                });
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+
+        window.onload = function() {
+            initCosmicCanvas();
+            renderShowcase(fictionalMovies);
+        };
+    </script>
+</body>
+</html>
