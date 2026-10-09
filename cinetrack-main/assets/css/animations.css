@@ -1,0 +1,443 @@
+/* =============================================================
+   CineTrack — Premium 2026 animations
+   Load AFTER style.css and effects.css
+   ============================================================= */
+
+:root {
+    --ease-out-expo: cubic-bezier(.16, 1, .3, 1);
+    --ease-out-back: cubic-bezier(.34, 1.56, .64, 1);
+    --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+}
+
+/* =============================================================
+   1. MESH GRADIENT BACKGROUND (animated)
+   ============================================================= */
+body::before {
+    content: "";
+    position: fixed;
+    inset: -50%;
+    z-index: -2;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse 800px 600px at 20% 30%, rgba(139, 92, 246, .25), transparent 50%),
+        radial-gradient(ellipse 700px 500px at 80% 20%, rgba(224, 64, 155, .22), transparent 50%),
+        radial-gradient(ellipse 900px 700px at 50% 80%, rgba(79, 140, 255, .18), transparent 50%),
+        radial-gradient(ellipse 600px 500px at 10% 90%, rgba(251, 191, 36, .12), transparent 50%);
+    filter: blur(60px);
+    animation: meshMove 20s ease-in-out infinite alternate;
+}
+@keyframes meshMove {
+    0%   { transform: translate(0, 0) scale(1); }
+    33%  { transform: translate(3%, -2%) scale(1.05); }
+    66%  { transform: translate(-2%, 3%) scale(0.98); }
+    100% { transform: translate(2%, 2%) scale(1.02); }
+}
+
+/* =============================================================
+   2. FLOATING ORBS (parallax glow)
+   ============================================================= */
+.floating-orb {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: -1;
+    filter: blur(40px);
+    opacity: .35;
+    will-change: transform;
+    animation: orbFloat 18s ease-in-out infinite;
+}
+.floating-orb.o1 { width: 340px; height: 340px; top: 8%; left: -4%; background: radial-gradient(circle, #8b5cf6, transparent 70%); animation-delay: 0s; }
+.floating-orb.o2 { width: 260px; height: 260px; top: 55%; right: -3%; background: radial-gradient(circle, #e0409b, transparent 70%); animation-delay: -6s; }
+.floating-orb.o3 { width: 300px; height: 300px; bottom: 5%; left: 25%; background: radial-gradient(circle, #4f8cff, transparent 70%); animation-delay: -12s; }
+@keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25%      { transform: translate(30px, -40px) scale(1.1); }
+    50%      { transform: translate(-20px, 30px) scale(0.95); }
+    75%      { transform: translate(40px, 20px) scale(1.05); }
+}
+
+/* =============================================================
+   3. SCROLL PROGRESS BAR
+   ============================================================= */
+.scroll-progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    width: 0;
+    z-index: 100;
+    background: linear-gradient(90deg, #8b5cf6, #e0409b, #fbbf24);
+    box-shadow: 0 0 12px rgba(224, 64, 155, .6);
+    transition: width .1s ease-out;
+    pointer-events: none;
+}
+
+/* =============================================================
+   4. PAGE TRANSITIONS
+   ============================================================= */
+body.is-leaving {
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity .25s ease-out, transform .25s ease-out;
+}
+main {
+    animation: pageIn .6s var(--ease-out-expo) both;
+}
+@keyframes pageIn {
+    from { opacity: 0; transform: translateY(14px); }
+}
+/* Staggered entrance sa main children */
+main > section,
+main > .page-head,
+main > .grid {
+    animation: staggerIn .7s var(--ease-out-expo) both;
+}
+main > *:nth-child(1) { animation-delay: .05s; }
+main > *:nth-child(2) { animation-delay: .12s; }
+main > *:nth-child(3) { animation-delay: .19s; }
+main > *:nth-child(4) { animation-delay: .26s; }
+main > *:nth-child(5) { animation-delay: .33s; }
+main > *:nth-child(6) { animation-delay: .40s; }
+@keyframes staggerIn {
+    from { opacity: 0; transform: translateY(22px); }
+}
+
+/* =============================================================
+   5. NAV PILL — sliding active indicator
+   ============================================================= */
+.nav-pill {
+    position: relative;
+}
+.nav-pill::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 36px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(139, 92, 246, .55), rgba(88, 28, 135, .55));
+    box-shadow: inset 0 0 0 1px rgba(167, 139, 250, .5), 0 0 18px rgba(139, 92, 246, .3);
+    transition: all .35s var(--ease-out-expo);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+.nav-pill.has-active::before {
+    opacity: 1;
+}
+.nav-pill a {
+    position: relative;
+    z-index: 1;
+    transition: color .25s ease-out, background .25s ease-out;
+}
+.nav-pill a.is-active {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* =============================================================
+   6. LINK HOVER — animated underline
+   ============================================================= */
+.info-link,
+.link-arrow,
+.auth-link,
+.auth-head p a,
+.auth-alt a,
+.foot-grid a:not(.brand),
+.suggest-item strong {
+    position: relative;
+}
+.foot-grid a:not(.brand) {
+    display: block;
+    padding: .22rem 0;
+    transition: color .2s ease-out, padding-left .2s ease-out;
+}
+.foot-grid a:not(.brand):hover {
+    padding-left: 6px;
+    color: #fff;
+}
+.foot-grid a:not(.brand)::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 0;
+    height: 1px;
+    background: var(--grad);
+    transform: translateY(-50%);
+    transition: width .25s var(--ease-out-expo);
+}
+.foot-grid a:not(.brand):hover::before {
+    width: 4px;
+}
+
+/* Nav pill link underline */
+.nav-pill a::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 6px;
+    width: 0;
+    height: 2px;
+    background: var(--grad);
+    border-radius: 2px;
+    transform: translateX(-50%);
+    transition: width .3s var(--ease-out-expo);
+}
+.nav-pill a:not(.is-active):hover::after {
+    width: 40%;
+}
+
+/* =============================================================
+   7. BUTTON RIPPLE
+   ============================================================= */
+.btn {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+.btn .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .4);
+    transform: scale(0);
+    animation: rippleGo .6s var(--ease-out-expo);
+    pointer-events: none;
+    z-index: 0;
+}
+@keyframes rippleGo {
+    to { transform: scale(4); opacity: 0; }
+}
+
+/* =============================================================
+   8. CARD ENTRANCE STAGGER
+   ============================================================= */
+.grid-movies .mcard,
+.rail .mcard,
+.folder-grid .folder-card {
+    animation: cardIn .65s var(--ease-out-expo) both;
+}
+.grid-movies .mcard:nth-child(1)   { animation-delay: .02s; }
+.grid-movies .mcard:nth-child(2)   { animation-delay: .06s; }
+.grid-movies .mcard:nth-child(3)   { animation-delay: .10s; }
+.grid-movies .mcard:nth-child(4)   { animation-delay: .14s; }
+.grid-movies .mcard:nth-child(5)   { animation-delay: .18s; }
+.grid-movies .mcard:nth-child(6)   { animation-delay: .22s; }
+.grid-movies .mcard:nth-child(7)   { animation-delay: .26s; }
+.grid-movies .mcard:nth-child(8)   { animation-delay: .30s; }
+.grid-movies .mcard:nth-child(n+9) { animation-delay: .34s; }
+@keyframes cardIn {
+    from { opacity: 0; transform: translateY(24px) scale(.96); }
+}
+
+/* =============================================================
+   9. STAT NUMBER COUNTER — pulse on value change
+   ============================================================= */
+.stat-value {
+    display: inline-block;
+    transition: transform .3s var(--ease-out-back), color .3s;
+}
+.stat-value.is-updating {
+    animation: statPop .7s var(--ease-out-back);
+}
+@keyframes statPop {
+    0%   { transform: scale(1); color: #fff; }
+    40%  { transform: scale(1.15); color: var(--gold); }
+    100% { transform: scale(1); color: var(--text); }
+}
+
+/* =============================================================
+   10. PULSING ACCENT — "live" feel
+   ============================================================= */
+.eyebrow::before,
+.live-dot {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: .4rem;
+    border-radius: 50%;
+    background: var(--gold);
+    vertical-align: middle;
+    animation: pulse 1.8s ease-in-out infinite;
+    box-shadow: 0 0 8px var(--gold);
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1);   opacity: 1; }
+    50%      { transform: scale(1.5); opacity: .5; }
+}
+
+/* =============================================================
+   11. PAGE LOADER — first paint
+   ============================================================= */
+.page-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: grid;
+    place-items: center;
+    background: var(--bg);
+    transition: opacity .5s ease-out, visibility .5s;
+}
+.page-loader.is-done {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+.page-loader-logo {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    color: var(--gold);
+    border: 2px solid transparent;
+    background: linear-gradient(var(--bg), var(--bg)) padding-box, var(--grad) border-box;
+    box-shadow: 0 0 30px rgba(139, 92, 246, .5);
+    animation: loaderSpin 1.4s ease-in-out infinite;
+}
+@keyframes loaderSpin {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    50%      { transform: rotate(180deg) scale(.9); }
+}
+.page-loader-bar {
+    margin-top: 1.2rem;
+    width: 120px;
+    height: 3px;
+    border-radius: 99px;
+    background: rgba(139, 92, 246, .15);
+    overflow: hidden;
+}
+.page-loader-bar::after {
+    content: "";
+    display: block;
+    width: 40%;
+    height: 100%;
+    border-radius: 99px;
+    background: var(--grad);
+    animation: loaderBar 1.2s ease-in-out infinite;
+}
+@keyframes loaderBar {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(350%); }
+}
+
+/* =============================================================
+   12. TAB / FILTER CHIP — animated selection
+   ============================================================= */
+.chip-link,
+.chip,
+.view-toggle .btn {
+    position: relative;
+    overflow: hidden;
+}
+.chip-link.is-on,
+.view-toggle .btn-primary {
+    animation: chipPop .4s var(--ease-out-back);
+}
+@keyframes chipPop {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+
+/* =============================================================
+   13. GRADIENT TEXT SHIFT — animated gradient sa headings
+   ============================================================= */
+.grad-text {
+    background-size: 200% 200%;
+    animation: gradientShift 6s ease infinite;
+}
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
+}
+
+/* =============================================================
+   14. FOCUS RING — premium look
+   ============================================================= */
+input:focus,
+select:focus,
+textarea:focus {
+    animation: focusGlow .5s var(--ease-out-expo);
+}
+@keyframes focusGlow {
+    0%   { box-shadow: 0 0 0 0 rgba(139, 92, 246, .6); }
+    100% { box-shadow: 0 0 0 4px rgba(139, 92, 246, .15); }
+}
+
+/* =============================================================
+   15. SMOOTH POSTER HOVER
+   ============================================================= */
+.poster img,
+.poster-art {
+    transition: transform 1s var(--ease-out-expo), opacity .5s;
+}
+
+/* =============================================================
+   16. Toast notification slide-in
+   ============================================================= */
+.flash {
+    animation: toastIn .5s var(--ease-out-back) both;
+}
+@keyframes toastIn {
+    from { opacity: 0; transform: translateY(-20px) scale(.96); }
+}
+
+/* =============================================================
+   17. SKELETON LOADER — para sa dynamic content
+   ============================================================= */
+@keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+.is-loading .mcard {
+    background: linear-gradient(90deg, rgba(139,92,246,.06) 25%, rgba(139,92,246,.14) 50%, rgba(139,92,246,.06) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s linear infinite;
+}
+
+/* =============================================================
+   18. MOUSE CURSOR GLOW (mas visible)
+   ============================================================= */
+.cursor-glow {
+    position: fixed;
+    top: 0; left: 0;
+    width: 500px; height: 500px;
+    margin: -250px 0 0 -250px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+    background: radial-gradient(circle, rgba(139, 92, 246, .12), rgba(224, 64, 155, .06) 30%, transparent 60%);
+    mix-blend-mode: screen;
+    will-change: transform;
+    transition: opacity .3s;
+    opacity: 0;
+}
+body:hover .cursor-glow { opacity: 1; }
+
+/* =============================================================
+   19. SMOOTH SCROLL INDICATOR
+   ============================================================= */
+@keyframes scrollHint {
+    0%, 100% { transform: translateY(0); opacity: 1; }
+    50%      { transform: translateY(6px); opacity: .5; }
+}
+
+/* =============================================================
+   20. REDUCED MOTION OVERRIDE
+   ============================================================= */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+    .floating-orb,
+    .cursor-glow,
+    .page-loader { display: none; }
+    main,
+    .mcard,
+    .folder-card { animation: none !important; }
+}

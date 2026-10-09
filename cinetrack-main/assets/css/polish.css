@@ -1,0 +1,117 @@
+/* CineTrack polish layer. Load AFTER style.css (and before page-specific CSS like landing.css).
+   Adds: display typeface, film grain, GPU-friendly background, motion system, card hover, dialogs, a11y. */
+
+:root {
+    --ease: cubic-bezier(.22, 1, .36, 1);
+    /* Clash Display (Fontshare) for headings; Outfit stays for body. Remove the first name to revert. */
+    --font-display: 'Clash Display', 'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --shadow-1: inset 0 1px 0 rgba(255, 255, 255, .05), 0 12px 32px -16px rgba(0, 0, 0, .65);
+}
+
+/* ---- Base: type, selection, scrollbars ---- */
+html { scrollbar-width: thin; scrollbar-color: #3b2a66 var(--bg); }
+body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+h1, h2, h3 { text-wrap: balance; }
+h1 { letter-spacing: -.03em; }
+p { text-wrap: pretty; }
+::selection { background: rgba(224, 64, 155, .45); color: #fff; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: #3b2a66; border-radius: 99px; border: 2px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover { background: var(--violet); }
+
+/* ---- Background: animated mesh gradient is now in animations.css ---- */
+body { background-image: none; background-attachment: scroll; }
+/* Film grain: kills gradient banding and adds a cinematic texture */
+body::after { content: ""; position: fixed; inset: 0; z-index: 50; pointer-events: none; opacity: .05; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+/* ---- Accessibility ---- */
+.skip-link { position: absolute; left: 1rem; top: -4rem; z-index: 100; padding: .6rem 1.1rem; border-radius: 999px; background: var(--grad); color: #fff; font-weight: 600; transition: top .2s; }
+.skip-link:focus { top: 1rem; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; }
+main:focus { outline: none; }
+
+/* ---- Header ---- */
+.site-header { transition: background .3s, box-shadow .3s; }
+.site-header::after { content: ""; position: absolute; inset: auto 0 -1px 0; height: 1px; opacity: 0; transition: opacity .3s;
+    background: linear-gradient(90deg, transparent, rgba(224, 64, 155, .55), rgba(139, 92, 246, .55), transparent); }
+.site-header.is-scrolled { background: rgba(8, 4, 15, .9); box-shadow: 0 14px 40px -20px #000; }
+.site-header.is-scrolled::after { opacity: 1; }
+.profile-menu { animation: dlg-in .25s var(--ease); }
+
+/* ---- Buttons: shine sweep, glow, disabled state ---- */
+.btn { position: relative; overflow: hidden; isolation: isolate; transition: transform .2s var(--ease), box-shadow .25s, background .2s, border-color .2s, filter .2s; }
+.btn::after { content: ""; position: absolute; inset: 0; z-index: -1; transform: translateX(-120%); transition: transform .7s var(--ease);
+    background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, .2) 50%, transparent 70%); }
+.btn:hover::after { transform: translateX(120%); }
+.btn-primary { box-shadow: 0 8px 24px -8px rgba(224, 64, 155, .7), inset 0 1px 0 rgba(255, 255, 255, .22); }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 14px 32px -8px rgba(224, 64, 155, .85), inset 0 1px 0 rgba(255, 255, 255, .25); }
+.btn[data-magnetic] { transition: box-shadow .25s, background .2s, filter .2s; }   /* GSAP owns transform here */
+.btn:disabled, .btn[disabled] { opacity: .45; cursor: not-allowed; box-shadow: none; transform: none; }
+.btn:disabled::after { display: none; }
+
+/* ---- Cards + form fields ---- */
+.card { box-shadow: var(--shadow-1); }
+input, select, textarea { transition: border-color .2s, box-shadow .2s, background .2s; }
+input:hover, select:hover, textarea:hover { border-color: rgba(167, 139, 250, .38); }
+input:focus, select:focus, textarea:focus { background: rgba(14, 8, 28, .92); }
+
+/* ---- Movie card: tilt, spotlight, poster zoom ---- */
+.mcard { --rx: 0deg; --ry: 0deg; position: relative; will-change: transform; box-shadow: var(--shadow-1);
+    transition: transform .5s var(--ease), box-shadow .4s, border-color .3s; }
+.mcard:hover { transform: perspective(900px) translateY(-6px) rotateX(var(--rx)) rotateY(var(--ry));
+    transition: transform .12s ease-out, box-shadow .3s, border-color .3s;
+    border-color: rgba(167, 139, 250, .45); box-shadow: 0 0 0 1px var(--line), 0 24px 50px -18px rgba(139, 92, 246, .55); }
+.mcard::before { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; opacity: 0; transition: opacity .3s;
+    background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 0%), rgba(255, 255, 255, .11), transparent 60%); }
+.mcard:hover::before { opacity: 1; }
+.mcard .poster img, .mcard .poster-art { transition: transform .7s var(--ease), opacity .5s; }
+.mcard:hover .poster img, .mcard:hover .poster-art { transform: scale(1.06); }
+.mcard h3 a { transition: color .2s; }
+.mcard h3 a:hover { color: #f9a8d4; }
+.poster img.is-loading { opacity: 0; }
+.is-list .mcard:hover, .pick-card .mcard:hover { transform: translateY(-3px); }
+@media (hover: none) { .mcard:hover { transform: none; } .mcard::before { display: none; } }
+
+/* Rails: room for the hover lift and glow so they are not clipped by overflow */
+.rail { padding: .7rem .5rem .9rem; margin: -.7rem -.5rem 0; }
+
+/* ---- Dashboard hero: slow aurora behind the content ---- */
+.landing > * { position: relative; }
+.landing::before { content: ""; position: absolute; inset: -25%; pointer-events: none; will-change: transform; filter: blur(60px);
+    background: conic-gradient(from 180deg at 70% 40%, rgba(139, 92, 246, .2), rgba(224, 64, 155, .16), rgba(79, 140, 255, .13), rgba(139, 92, 246, .2));
+    animation: aurora 24s linear infinite; }
+@keyframes aurora { to { transform: rotate(360deg); } }
+
+/* ---- Scroll reveal (class added by app.js, so nothing is hidden without JS) ---- */
+.reveal-up:not(.in) { opacity: 0; transform: translateY(28px); }
+.reveal-up.in { animation: rise .85s var(--ease) backwards; animation-delay: calc(var(--i, 0) * 70ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(28px); } }
+
+/* ---- Flash, dialogs, skeletons ---- */
+.flash { animation: dlg-in .4s var(--ease); transition: opacity .3s, transform .3s; }
+.flash.is-leaving { opacity: 0; transform: translateY(-8px); }
+dialog[open] { animation: dlg-in .4s var(--ease); }
+dialog[open]::backdrop { animation: fade-in .3s ease; }
+@keyframes dlg-in { from { opacity: 0; transform: translateY(18px) scale(.97); } }
+@keyframes fade-in { from { opacity: 0; } }
+.shuffle-card.ghost { background: linear-gradient(100deg, rgba(139, 92, 246, .18) 30%, rgba(224, 64, 155, .32) 50%, rgba(139, 92, 246, .18) 70%); background-size: 200% 100%; animation: shimmer 1.3s linear infinite, shuf .22s ease-in-out infinite alternate; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+/* ---- Footer ---- */
+.site-footer { position: relative; }
+.site-footer::before { content: ""; position: absolute; inset: -1px 0 auto; height: 1px; background: linear-gradient(90deg, transparent, rgba(224, 64, 155, .5), rgba(139, 92, 246, .5), transparent); }
+
+/* ---- Lenis ---- */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal-up:not(.in) { opacity: 1; transform: none; }
+    body::after { display: none; }
+}
